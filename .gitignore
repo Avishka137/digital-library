@@ -1,0 +1,5 @@
+# Add to your .gitignore
+node_modules/
+.cache/
+frontend/node_modules/
+frontend/.cache/

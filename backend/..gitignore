@@ -1,0 +1,4 @@
+cd backend
+echo uploads/ > .gitignore
+echo data/ >> .gitignore
+echo node_modules/ >> .gitignore
