@@ -94,7 +94,7 @@ const Dashboard = () => {
       {/* Welcome Section */}
       <div className="dashboard-welcome">
         <div className="welcome-content">
-          <h1>📚 Welcome to Your Digital Library</h1>
+          <h1>📚 Welcome to VIKLIB </h1> <br/> <h4> Your Digital Library</h4>
           <p>Manage and explore your book collection with ease</p>
         </div>
         <div className="welcome-time">
