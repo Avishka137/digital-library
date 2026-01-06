@@ -14,5 +14,21 @@
     "pdfFilename": "1767594818940-298110710.pdf",
     "coverFilename": "1767594819243-186804765.jpeg",
     "uploadedAt": "2026-01-05T06:33:39.257Z"
+  },
+  {
+    "id": "1767628606524",
+    "title": "dddd",
+    "author": "hng",
+    "isbn": "fg",
+    "category": "Self-Help",
+    "description": "opu8i",
+    "publishedYear": "2000",
+    "language": "English",
+    "pages": "20000",
+    "pdfPath": "C:\\Users\\VICTUS\\Desktop\\digital-library\\backend\\uploads\\books\\1767628606197-222647320.pdf",
+    "coverPath": "C:\\Users\\VICTUS\\Desktop\\digital-library\\backend\\uploads\\covers\\1767628606518-723860309.jpeg",
+    "pdfFilename": "1767628606197-222647320.pdf",
+    "coverFilename": "1767628606518-723860309.jpeg",
+    "uploadedAt": "2026-01-05T15:56:46.524Z"
   }
 ]

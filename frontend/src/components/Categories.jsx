@@ -1,21 +1,21 @@
-
 import React, { useState } from 'react';
 import { Book, Brain, Church, Lightbulb, History, User, Beaker, Heart, Plus, Edit2, Trash2, Search, X } from 'lucide-react';
+import './Categories.css';
 
 const Categories = () => {
   const [categories, setCategories] = useState([
-    { id: 1, name: 'Religious', icon: 'Church', color: 'from-purple-500 to-purple-600', count: 45 },
-    { id: 2, name: 'Psychology', icon: 'Brain', color: 'from-blue-500 to-blue-600', count: 32 },
-    { id: 3, name: 'Novels', icon: 'Book', color: 'from-green-500 to-green-600', count: 78 },
-    { id: 4, name: 'Science', icon: 'Beaker', color: 'from-red-500 to-red-600', count: 56 },
-    { id: 5, name: 'History', icon: 'History', color: 'from-yellow-500 to-yellow-600', count: 41 },
-    { id: 6, name: 'Biography', icon: 'User', color: 'from-indigo-500 to-indigo-600', count: 29 }
+    { id: 1, name: 'Religious', icon: 'Church', color: 'purple', count: 45 },
+    { id: 2, name: 'Psychology', icon: 'Brain', color: 'blue', count: 32 },
+    { id: 3, name: 'Novels', icon: 'Book', color: 'green', count: 78 },
+    { id: 4, name: 'Science', icon: 'Beaker', color: 'red', count: 56 },
+    { id: 5, name: 'History', icon: 'History', color: 'yellow', count: 41 },
+    { id: 6, name: 'Biography', icon: 'User', color: 'indigo', count: 29 }
   ]);
   
   const [searchTerm, setSearchTerm] = useState('');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState(null);
-  const [newCategory, setNewCategory] = useState({ name: '', icon: 'Book', color: 'from-blue-500 to-blue-600' });
+  const [newCategory, setNewCategory] = useState({ name: '', icon: 'Book', color: 'blue' });
 
   const iconComponents = {
     Church: Church,
@@ -29,14 +29,14 @@ const Categories = () => {
   };
 
   const colorOptions = [
-    { name: 'Blue', value: 'from-blue-500 to-blue-600' },
-    { name: 'Purple', value: 'from-purple-500 to-purple-600' },
-    { name: 'Green', value: 'from-green-500 to-green-600' },
-    { name: 'Red', value: 'from-red-500 to-red-600' },
-    { name: 'Yellow', value: 'from-yellow-500 to-yellow-600' },
-    { name: 'Indigo', value: 'from-indigo-500 to-indigo-600' },
-    { name: 'Pink', value: 'from-pink-500 to-pink-600' },
-    { name: 'Teal', value: 'from-teal-500 to-teal-600' }
+    { name: 'Blue', value: 'blue' },
+    { name: 'Purple', value: 'purple' },
+    { name: 'Green', value: 'green' },
+    { name: 'Red', value: 'red' },
+    { name: 'Yellow', value: 'yellow' },
+    { name: 'Indigo', value: 'indigo' },
+    { name: 'Pink', value: 'pink' },
+    { name: 'Teal', value: 'teal' }
   ];
 
   const iconOptions = ['Book', 'Brain', 'Church', 'Beaker', 'History', 'User', 'Lightbulb', 'Heart'];
@@ -85,7 +85,7 @@ const Categories = () => {
   const resetForm = () => {
     setIsAddModalOpen(false);
     setEditingCategory(null);
-    setNewCategory({ name: '', icon: 'Book', color: 'from-blue-500 to-blue-600' });
+    setNewCategory({ name: '', icon: 'Book', color: 'blue' });
   };
 
   const renderIcon = (iconName, className = "") => {
@@ -94,83 +94,76 @@ const Categories = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-4 sm:p-8">
-      <div className="max-w-7xl mx-auto">
+    <div className="categories-page">
+      <div className="categories-container">
         {/* Header */}
-        <div className="mb-10">
-          <div className="flex items-center gap-4 mb-3">
-            <div className="bg-gradient-to-br from-blue-600 to-indigo-600 p-4 rounded-2xl shadow-2xl transform hover:scale-105 transition-transform">
-              <Book className="w-10 h-10 text-white" />
+        <div className="page-header">
+          <div className="header-content">
+            <div className="header-icon">
+              <Book className="icon" />
             </div>
-            <div>
-              <h1 className="text-5xl font-bold gradient-text">
-                Categories
-              </h1>
-              <p className="text-gray-500 text-sm mt-1">Organize your digital library</p>
+            <div className="header-text">
+              <h1 className="gradient-text">Categories</h1>
+              <p className="subtitle">Organize your digital library</p>
             </div>
           </div>
         </div>
 
         {/* Search and Add Button */}
-        <div className="flex gap-4 mb-8 flex-wrap">
-          <div className="flex-1 min-w-[280px] relative group">
-            <Search className="absolute left-5 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 group-focus-within:text-blue-500 transition-colors" />
+        <div className="controls-section">
+          <div className="search-wrapper">
+            <Search className="search-icon" />
             <input
               type="text"
               placeholder="Search categories..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="search-input w-full pl-14 pr-5 py-4 rounded-2xl bg-white border-2 border-gray-100 focus:border-blue-500 focus:outline-none transition-all shadow-sm hover:shadow-md"
+              className="search-input"
             />
           </div>
           <button
             onClick={() => {
               setEditingCategory(null);
-              setNewCategory({ name: '', icon: 'Book', color: 'from-blue-500 to-blue-600' });
+              setNewCategory({ name: '', icon: 'Book', color: 'blue' });
               setIsAddModalOpen(true);
             }}
-            className="add-category-btn bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-4 rounded-2xl font-semibold flex items-center gap-3 hover:from-blue-700 hover:to-indigo-700 shadow-lg"
+            className="add-category-btn"
           >
-            <Plus className="w-6 h-6" />
+            <Plus className="btn-icon" />
             Add Category
           </button>
         </div>
 
         {/* Categories Grid */}
         {filteredCategories.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="categories-grid">
             {filteredCategories.map((category) => (
-              <div
-                key={category.id}
-                className="category-card group bg-white rounded-3xl shadow-lg hover:shadow-2xl p-6 border border-gray-100 hover:border-blue-200 relative"
-              >
-                <div className="flex items-start justify-between mb-5">
-                  <div className={`category-icon-container bg-gradient-to-br ${category.color} p-5 rounded-2xl shadow-xl`}>
-                    {renderIcon(category.icon, "w-8 h-8 text-white")}
+              <div key={category.id} className="category-card">
+                <div className="card-header">
+                  <div className={`category-icon-container color-${category.color}`}>
+                    {renderIcon(category.icon, "category-icon")}
                   </div>
-                  <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="card-actions">
                     <button
                       onClick={() => handleEditCategory(category)}
-                      className="edit-btn p-2.5 hover:bg-blue-50 rounded-xl transition-all"
+                      className="edit-btn"
                       title="Edit category"
                     >
-                      <Edit2 className="w-4 h-4 text-blue-600" />
+                      <Edit2 className="action-icon" />
                     </button>
                     <button
                       onClick={() => handleDeleteCategory(category.id)}
-                      className="delete-btn p-2.5 hover:bg-red-50 rounded-xl transition-all"
+                      className="delete-btn"
                       title="Delete category"
                     >
-                      <Trash2 className="w-4 h-4 text-red-600" />
+                      <Trash2 className="action-icon" />
                     </button>
                   </div>
                 </div>
-                <h3 className="text-2xl font-bold text-gray-800 mb-2 group-hover:text-blue-600 transition-colors">
-                  {category.name}
-                </h3>
-                <div className="flex items-center gap-2">
-                  <div className={`w-2 h-2 rounded-full bg-gradient-to-r ${category.color}`}></div>
-                  <p className="text-gray-500 text-sm font-medium">
+                <h3 className="category-name">{category.name}</h3>
+                <div className="category-info">
+                  <div className={`color-dot color-${category.color}`}></div>
+                  <p className="book-count">
                     {category.count} {category.count === 1 ? 'book' : 'books'}
                   </p>
                 </div>
@@ -178,80 +171,65 @@ const Categories = () => {
             ))}
           </div>
         ) : (
-          <div className="empty-state text-center py-24">
-            <div className="bg-gradient-to-br from-gray-100 to-gray-200 w-24 h-24 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-inner">
-              <Book className="w-12 h-12 text-gray-400" />
+          <div className="empty-state">
+            <div className="empty-icon">
+              <Book className="icon" />
             </div>
-            <h3 className="text-2xl font-bold text-gray-700 mb-2">No categories found</h3>
-            <p className="text-gray-500">Try adjusting your search or create a new category</p>
+            <h3 className="empty-title">No categories found</h3>
+            <p className="empty-text">Try adjusting your search or create a new category</p>
           </div>
         )}
 
         {/* Add/Edit Modal */}
         {isAddModalOpen && (
-          <div className="modal-overlay fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-            <div className="modal-content bg-white rounded-3xl shadow-2xl max-w-lg w-full p-8">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-3xl font-bold text-gray-800">
+          <div className="modal-overlay" onClick={resetForm}>
+            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+              <div className="modal-header">
+                <h2 className="modal-title">
                   {editingCategory ? 'Edit Category' : 'Create Category'}
                 </h2>
-                <button
-                  onClick={resetForm}
-                  className="p-2 hover:bg-gray-100 rounded-xl transition-all"
-                >
-                  <X className="w-6 h-6 text-gray-500" />
+                <button onClick={resetForm} className="close-btn">
+                  <X className="close-icon" />
                 </button>
               </div>
               
-              <div className="space-y-6">
-                <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-3">
-                    Category Name
-                  </label>
+              <div className="modal-body">
+                <div className="form-group">
+                  <label className="form-label">Category Name</label>
                   <input
                     type="text"
                     value={newCategory.name}
                     onChange={(e) => setNewCategory({ ...newCategory, name: e.target.value })}
                     placeholder="e.g., Science Fiction"
-                    className="w-full px-5 py-4 rounded-2xl border-2 border-gray-200 focus:border-blue-500 focus:outline-none transition-all text-lg"
+                    className="form-input"
                     autoFocus
                   />
                 </div>
 
-                <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-3">
-                    Choose Icon
-                  </label>
-                  <div className="grid grid-cols-4 gap-3">
+                <div className="form-group">
+                  <label className="form-label">Choose Icon</label>
+                  <div className="icon-grid">
                     {iconOptions.map((icon) => (
                       <button
                         key={icon}
                         onClick={() => setNewCategory({ ...newCategory, icon })}
-                        className={`icon-selector p-4 rounded-2xl border-2 transition-all ${
-                          newCategory.icon === icon
-                            ? 'selected border-blue-500 bg-blue-50 shadow-md'
-                            : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
-                        }`}
+                        className={`icon-selector ${newCategory.icon === icon ? 'selected' : ''}`}
                       >
-                        {renderIcon(icon, "w-7 h-7 mx-auto text-gray-700")}
+                        {renderIcon(icon, "selector-icon")}
                       </button>
                     ))}
                   </div>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-3">
-                    Pick Color
-                  </label>
-                  <div className="grid grid-cols-4 gap-3">
+                <div className="form-group">
+                  <label className="form-label">Pick Color</label>
+                  <div className="color-grid">
                     {colorOptions.map((colorObj) => (
                       <button
                         key={colorObj.value}
                         onClick={() => setNewCategory({ ...newCategory, color: colorObj.value })}
-                        className={`color-option h-14 rounded-2xl bg-gradient-to-br ${colorObj.value} transition-all ${
-                          newCategory.color === colorObj.value
-                            ? 'selected ring-4 ring-offset-2 ring-blue-400 shadow-lg'
-                            : 'hover:shadow-md'
+                        className={`color-option color-${colorObj.value} ${
+                          newCategory.color === colorObj.value ? 'selected' : ''
                         }`}
                         title={colorObj.name}
                       />
@@ -260,17 +238,14 @@ const Categories = () => {
                 </div>
               </div>
 
-              <div className="flex gap-4 mt-8">
-                <button
-                  onClick={resetForm}
-                  className="flex-1 px-6 py-4 rounded-2xl border-2 border-gray-200 font-bold text-gray-700 hover:bg-gray-50 transition-all hover:scale-105 active:scale-95"
-                >
+              <div className="modal-footer">
+                <button onClick={resetForm} className="cancel-btn">
                   Cancel
                 </button>
                 <button
                   onClick={editingCategory ? handleUpdateCategory : handleAddCategory}
                   disabled={!newCategory.name.trim()}
-                  className="flex-1 px-6 py-4 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 active:scale-95"
+                  className="submit-btn"
                 >
                   {editingCategory ? 'Update' : 'Create'}
                 </button>
@@ -279,7 +254,7 @@ const Categories = () => {
           </div>
         )}
       </div>
-      </div>
+    </div>
   );
 };
 
