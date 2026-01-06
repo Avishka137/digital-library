@@ -32,7 +32,6 @@ const Users = () => {
     { name: 'Teal', value: 'teal' }
   ];
 
-  // Fetch users from backend
   useEffect(() => {
     fetchUsers();
   }, []);
@@ -40,12 +39,31 @@ const Users = () => {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem('token'); // Get auth token
+      const token = localStorage.getItem('token');
+      
+      if (!token) {
+        console.error('No token found');
+        alert('Please login to view users');
+        return;
+      }
+
       const response = await fetch('http://localhost:5000/api/users', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
+      
+      if (response.status === 401) {
+        alert('Session expired. Please login again.');
+        localStorage.removeItem('token');
+        window.location.href = '/login';
+        return;
+      }
+
+      if (response.status === 403) {
+        alert('Access denied. Admin privileges required.');
+        return;
+      }
       
       if (!response.ok) {
         throw new Error('Failed to fetch users');
@@ -54,9 +72,9 @@ const Users = () => {
       const data = await response.json();
       
       // Add UI properties to users
-      const usersWithUI = data.users.map(user => ({
+      const usersWithUI = (data.users || []).map(user => ({
         ...user,
-        avatar: generateAvatar(user.name),
+        avatar: user.avatar || generateAvatar(user.name),
         color: user.color || getRandomColor(),
         borrowedBooks: user.borrowedBooks || 0
       }));
@@ -64,48 +82,11 @@ const Users = () => {
       setUsers(usersWithUI);
     } catch (error) {
       console.error('Error fetching users:', error);
-      // Fallback to demo data if API fails
-      setUsers(getDemoUsers());
+      alert('Failed to load users. Please try again.');
     } finally {
       setLoading(false);
     }
   };
-
-  const getDemoUsers = () => [
-    { 
-      id: 1, 
-      name: 'John Doe', 
-      email: 'john.doe@example.com', 
-      phone: '+1 234 567 8900',
-      role: 'Admin',
-      location: 'New York, USA',
-      avatar: 'JD',
-      color: 'blue',
-      borrowedBooks: 5
-    },
-    { 
-      id: 2, 
-      name: 'Jane Smith', 
-      email: 'jane.smith@example.com', 
-      phone: '+1 234 567 8901',
-      role: 'Librarian',
-      location: 'Los Angeles, USA',
-      avatar: 'JS',
-      color: 'purple',
-      borrowedBooks: 3
-    },
-    { 
-      id: 3, 
-      name: 'Mike Johnson', 
-      email: 'mike.j@example.com', 
-      phone: '+1 234 567 8902',
-      role: 'Member',
-      location: 'Chicago, USA',
-      avatar: 'MJ',
-      color: 'green',
-      borrowedBooks: 8
-    }
-  ];
 
   const getRandomColor = () => {
     const colors = ['blue', 'purple', 'green', 'red', 'yellow', 'indigo', 'pink', 'teal'];
@@ -128,42 +109,45 @@ const Users = () => {
   };
 
   const handleAddUser = async () => {
-    if (newUser.name.trim() && newUser.email.trim()) {
-      try {
-        const token = localStorage.getItem('token');
-        const avatar = newUser.avatar || generateAvatar(newUser.name);
-        
-        const userData = {
-          name: newUser.name,
-          email: newUser.email,
-          password: newUser.password || 'password123', // Default password
-          phone: newUser.phone,
-          role: newUser.role,
-          location: newUser.location,
-          color: newUser.color
-        };
+    if (!newUser.name.trim() || !newUser.email.trim() || !newUser.password) {
+      alert('Please fill in all required fields');
+      return;
+    }
 
-        const response = await fetch('http://localhost:5000/api/users', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify(userData)
-        });
+    try {
+      const token = localStorage.getItem('token');
+      
+      const userData = {
+        name: newUser.name,
+        email: newUser.email,
+        password: newUser.password,
+        phone: newUser.phone,
+        role: newUser.role,
+        location: newUser.location,
+        color: newUser.color
+      };
 
-        if (!response.ok) {
-          throw new Error('Failed to create user');
-        }
+      const response = await fetch('http://localhost:5000/api/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(userData)
+      });
 
-        // Refresh users list
-        await fetchUsers();
-        resetForm();
-        alert('User created successfully!');
-      } catch (error) {
-        console.error('Error creating user:', error);
-        alert('Failed to create user. Please try again.');
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to create user');
       }
+
+      await fetchUsers();
+      resetForm();
+      alert('User created successfully!');
+    } catch (error) {
+      console.error('Error creating user:', error);
+      alert(error.message || 'Failed to create user. Please try again.');
     }
   };
 
@@ -175,7 +159,7 @@ const Users = () => {
       phone: user.phone || '',
       role: user.role,
       location: user.location || '',
-      password: '', // Don't pre-fill password
+      password: '',
       avatar: user.avatar,
       color: user.color
     });
@@ -183,71 +167,77 @@ const Users = () => {
   };
 
   const handleUpdateUser = async () => {
-    if (editingUser && newUser.name.trim() && newUser.email.trim()) {
-      try {
-        const token = localStorage.getItem('token');
-        
-        const userData = {
-          name: newUser.name,
-          email: newUser.email,
-          phone: newUser.phone,
-          role: newUser.role,
-          location: newUser.location,
-          color: newUser.color
-        };
+    if (!editingUser || !newUser.name.trim() || !newUser.email.trim()) {
+      alert('Please fill in all required fields');
+      return;
+    }
 
-        // Only include password if it was changed
-        if (newUser.password) {
-          userData.password = newUser.password;
-        }
+    try {
+      const token = localStorage.getItem('token');
+      
+      const userData = {
+        name: newUser.name,
+        email: newUser.email,
+        phone: newUser.phone,
+        role: newUser.role,
+        location: newUser.location,
+        color: newUser.color
+      };
 
-        const response = await fetch(`http://localhost:5000/api/users/${editingUser.id}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify(userData)
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to update user');
-        }
-
-        // Refresh users list
-        await fetchUsers();
-        resetForm();
-        alert('User updated successfully!');
-      } catch (error) {
-        console.error('Error updating user:', error);
-        alert('Failed to update user. Please try again.');
+      if (newUser.password) {
+        userData.password = newUser.password;
       }
+
+      const response = await fetch(`http://localhost:5000/api/users/${editingUser.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(userData)
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to update user');
+      }
+
+      await fetchUsers();
+      resetForm();
+      alert('User updated successfully!');
+    } catch (error) {
+      console.error('Error updating user:', error);
+      alert(error.message || 'Failed to update user. Please try again.');
     }
   };
 
   const handleDeleteUser = async (id) => {
-    if (window.confirm('Are you sure you want to delete this user?')) {
-      try {
-        const token = localStorage.getItem('token');
-        
-        const response = await fetch(`http://localhost:5000/api/users/${id}`, {
-          method: 'DELETE',
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
+    if (!window.confirm('Are you sure you want to delete this user?')) {
+      return;
+    }
 
-        if (!response.ok) {
-          throw new Error('Failed to delete user');
+    try {
+      const token = localStorage.getItem('token');
+      
+      const response = await fetch(`http://localhost:5000/api/users/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
         }
+      });
 
-        // Refresh users list
-        await fetchUsers();
-        alert('User deleted successfully!');
-      } catch (error) {
-        console.error('Error deleting user:', error);
-        alert('Failed to delete user. Please try again.');
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to delete user');
       }
+
+      await fetchUsers();
+      alert('User deleted successfully!');
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      alert(error.message || 'Failed to delete user. Please try again.');
     }
   };
 
