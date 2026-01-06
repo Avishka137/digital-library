@@ -1,9 +1,77 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Users as UsersIcon, Plus, Edit2, Trash2, Search, X, Mail, Phone, MapPin, Shield, User } from 'lucide-react';
 import './Users.css';
 
 const Users = () => {
-  const [users, setUsers] = useState([
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [editingUser, setEditingUser] = useState(null);
+  const [newUser, setNewUser] = useState({ 
+    name: '', 
+    email: '', 
+    phone: '',
+    role: 'Member',
+    location: '',
+    password: '',
+    avatar: '',
+    color: 'blue'
+  });
+
+  const roleOptions = ['Admin', 'Librarian', 'Member', 'Guest'];
+  
+  const colorOptions = [
+    { name: 'Blue', value: 'blue' },
+    { name: 'Purple', value: 'purple' },
+    { name: 'Green', value: 'green' },
+    { name: 'Red', value: 'red' },
+    { name: 'Yellow', value: 'yellow' },
+    { name: 'Indigo', value: 'indigo' },
+    { name: 'Pink', value: 'pink' },
+    { name: 'Teal', value: 'teal' }
+  ];
+
+  // Fetch users from backend
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const fetchUsers = async () => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem('token'); // Get auth token
+      const response = await fetch('http://localhost:5000/api/users', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch users');
+      }
+      
+      const data = await response.json();
+      
+      // Add UI properties to users
+      const usersWithUI = data.users.map(user => ({
+        ...user,
+        avatar: generateAvatar(user.name),
+        color: user.color || getRandomColor(),
+        borrowedBooks: user.borrowedBooks || 0
+      }));
+      
+      setUsers(usersWithUI);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+      // Fallback to demo data if API fails
+      setUsers(getDemoUsers());
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getDemoUsers = () => [
     { 
       id: 1, 
       name: 'John Doe', 
@@ -36,45 +104,13 @@ const Users = () => {
       avatar: 'MJ',
       color: 'green',
       borrowedBooks: 8
-    },
-    { 
-      id: 4, 
-      name: 'Sarah Williams', 
-      email: 'sarah.w@example.com', 
-      phone: '+1 234 567 8903',
-      role: 'Member',
-      location: 'Houston, USA',
-      avatar: 'SW',
-      color: 'pink',
-      borrowedBooks: 2
     }
-  ]);
-  
-  const [searchTerm, setSearchTerm] = useState('');
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [editingUser, setEditingUser] = useState(null);
-  const [newUser, setNewUser] = useState({ 
-    name: '', 
-    email: '', 
-    phone: '',
-    role: 'Member',
-    location: '',
-    avatar: '',
-    color: 'blue'
-  });
-
-  const roleOptions = ['Admin', 'Librarian', 'Member', 'Guest'];
-  
-  const colorOptions = [
-    { name: 'Blue', value: 'blue' },
-    { name: 'Purple', value: 'purple' },
-    { name: 'Green', value: 'green' },
-    { name: 'Red', value: 'red' },
-    { name: 'Yellow', value: 'yellow' },
-    { name: 'Indigo', value: 'indigo' },
-    { name: 'Pink', value: 'pink' },
-    { name: 'Teal', value: 'teal' }
   ];
+
+  const getRandomColor = () => {
+    const colors = ['blue', 'purple', 'green', 'red', 'yellow', 'indigo', 'pink', 'teal'];
+    return colors[Math.floor(Math.random() * colors.length)];
+  };
 
   const filteredUsers = users.filter(user =>
     user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -83,6 +119,7 @@ const Users = () => {
   );
 
   const generateAvatar = (name) => {
+    if (!name) return 'NA';
     const words = name.trim().split(' ');
     if (words.length >= 2) {
       return (words[0][0] + words[1][0]).toUpperCase();
@@ -90,17 +127,43 @@ const Users = () => {
     return name.substring(0, 2).toUpperCase();
   };
 
-  const handleAddUser = () => {
+  const handleAddUser = async () => {
     if (newUser.name.trim() && newUser.email.trim()) {
-      const avatar = newUser.avatar || generateAvatar(newUser.name);
-      const newUserData = {
-        id: Math.max(...users.map(u => u.id), 0) + 1,
-        ...newUser,
-        avatar,
-        borrowedBooks: 0
-      };
-      setUsers([...users, newUserData]);
-      resetForm();
+      try {
+        const token = localStorage.getItem('token');
+        const avatar = newUser.avatar || generateAvatar(newUser.name);
+        
+        const userData = {
+          name: newUser.name,
+          email: newUser.email,
+          password: newUser.password || 'password123', // Default password
+          phone: newUser.phone,
+          role: newUser.role,
+          location: newUser.location,
+          color: newUser.color
+        };
+
+        const response = await fetch('http://localhost:5000/api/users', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(userData)
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to create user');
+        }
+
+        // Refresh users list
+        await fetchUsers();
+        resetForm();
+        alert('User created successfully!');
+      } catch (error) {
+        console.error('Error creating user:', error);
+        alert('Failed to create user. Please try again.');
+      }
     }
   };
 
@@ -109,30 +172,82 @@ const Users = () => {
     setNewUser({ 
       name: user.name, 
       email: user.email, 
-      phone: user.phone,
+      phone: user.phone || '',
       role: user.role,
-      location: user.location,
+      location: user.location || '',
+      password: '', // Don't pre-fill password
       avatar: user.avatar,
       color: user.color
     });
     setIsAddModalOpen(true);
   };
 
-  const handleUpdateUser = () => {
+  const handleUpdateUser = async () => {
     if (editingUser && newUser.name.trim() && newUser.email.trim()) {
-      const avatar = newUser.avatar || generateAvatar(newUser.name);
-      setUsers(users.map(user =>
-        user.id === editingUser.id
-          ? { ...user, ...newUser, avatar }
-          : user
-      ));
-      resetForm();
+      try {
+        const token = localStorage.getItem('token');
+        
+        const userData = {
+          name: newUser.name,
+          email: newUser.email,
+          phone: newUser.phone,
+          role: newUser.role,
+          location: newUser.location,
+          color: newUser.color
+        };
+
+        // Only include password if it was changed
+        if (newUser.password) {
+          userData.password = newUser.password;
+        }
+
+        const response = await fetch(`http://localhost:5000/api/users/${editingUser.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(userData)
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to update user');
+        }
+
+        // Refresh users list
+        await fetchUsers();
+        resetForm();
+        alert('User updated successfully!');
+      } catch (error) {
+        console.error('Error updating user:', error);
+        alert('Failed to update user. Please try again.');
+      }
     }
   };
 
-  const handleDeleteUser = (id) => {
+  const handleDeleteUser = async (id) => {
     if (window.confirm('Are you sure you want to delete this user?')) {
-      setUsers(users.filter(user => user.id !== id));
+      try {
+        const token = localStorage.getItem('token');
+        
+        const response = await fetch(`http://localhost:5000/api/users/${id}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to delete user');
+        }
+
+        // Refresh users list
+        await fetchUsers();
+        alert('User deleted successfully!');
+      } catch (error) {
+        console.error('Error deleting user:', error);
+        alert('Failed to delete user. Please try again.');
+      }
     }
   };
 
@@ -145,15 +260,28 @@ const Users = () => {
       phone: '',
       role: 'Member',
       location: '',
+      password: '',
       avatar: '',
       color: 'blue'
     });
   };
 
+  if (loading) {
+    return (
+      <div className="users-page">
+        <div className="users-container">
+          <div className="loading-state">
+            <div className="loading-spinner"></div>
+            <p>Loading users...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="users-page">
       <div className="users-container">
-        {/* Header */}
         <div className="page-header">
           <div className="header-content">
             <div className="header-icon">
@@ -166,7 +294,6 @@ const Users = () => {
           </div>
         </div>
 
-        {/* Stats Cards */}
         <div className="stats-grid">
           <div className="stat-card">
             <div className="stat-icon color-blue">
@@ -197,7 +324,6 @@ const Users = () => {
           </div>
         </div>
 
-        {/* Search and Add Button */}
         <div className="controls-section">
           <div className="search-wrapper">
             <Search className="search-icon" />
@@ -218,6 +344,7 @@ const Users = () => {
                 phone: '',
                 role: 'Member',
                 location: '',
+                password: '',
                 avatar: '',
                 color: 'blue'
               });
@@ -230,7 +357,6 @@ const Users = () => {
           </button>
         </div>
 
-        {/* Users Grid */}
         {filteredUsers.length > 0 ? (
           <div className="users-grid">
             {filteredUsers.map((user) => (
@@ -271,17 +397,17 @@ const Users = () => {
                   </div>
                   <div className="detail-row">
                     <Phone className="detail-icon" />
-                    <span className="detail-text">{user.phone}</span>
+                    <span className="detail-text">{user.phone || 'N/A'}</span>
                   </div>
                   <div className="detail-row">
                     <MapPin className="detail-icon" />
-                    <span className="detail-text">{user.location}</span>
+                    <span className="detail-text">{user.location || 'N/A'}</span>
                   </div>
                 </div>
 
                 <div className="user-footer">
                   <p className="borrowed-count">
-                    {user.borrowedBooks} {user.borrowedBooks === 1 ? 'book' : 'books'} borrowed
+                    {user.borrowedBooks || 0} {user.borrowedBooks === 1 ? 'book' : 'books'} borrowed
                   </p>
                 </div>
               </div>
@@ -297,7 +423,6 @@ const Users = () => {
           </div>
         )}
 
-        {/* Add/Edit Modal */}
         {isAddModalOpen && (
           <div className="modal-overlay" onClick={resetForm}>
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -338,6 +463,17 @@ const Users = () => {
 
                 <div className="form-row">
                   <div className="form-group">
+                    <label className="form-label">Password {!editingUser && '*'}</label>
+                    <input
+                      type="password"
+                      value={newUser.password}
+                      onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
+                      placeholder={editingUser ? "Leave blank to keep current" : "Enter password"}
+                      className="form-input"
+                    />
+                  </div>
+
+                  <div className="form-group">
                     <label className="form-label">Phone Number</label>
                     <input
                       type="tel"
@@ -347,17 +483,17 @@ const Users = () => {
                       className="form-input"
                     />
                   </div>
+                </div>
 
-                  <div className="form-group">
-                    <label className="form-label">Location</label>
-                    <input
-                      type="text"
-                      value={newUser.location}
-                      onChange={(e) => setNewUser({ ...newUser, location: e.target.value })}
-                      placeholder="New York, USA"
-                      className="form-input"
-                    />
-                  </div>
+                <div className="form-group">
+                  <label className="form-label">Location</label>
+                  <input
+                    type="text"
+                    value={newUser.location}
+                    onChange={(e) => setNewUser({ ...newUser, location: e.target.value })}
+                    placeholder="New York, USA"
+                    className="form-input"
+                  />
                 </div>
 
                 <div className="form-group">
@@ -399,7 +535,7 @@ const Users = () => {
                 </button>
                 <button
                   onClick={editingUser ? handleUpdateUser : handleAddUser}
-                  disabled={!newUser.name.trim() || !newUser.email.trim()}
+                  disabled={!newUser.name.trim() || !newUser.email.trim() || (!editingUser && !newUser.password)}
                   className="submit-btn"
                 >
                   {editingUser ? 'Update User' : 'Create User'}
