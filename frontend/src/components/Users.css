@@ -769,4 +769,38 @@
 
   .stats-grid {
     grid-template-columns: 1fr;
-  }}
+  }
+
+  .users-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .user-card {
+    animation-delay: 0s !important;
+  }
+
+  .user-card:hover {
+    transform: translateY(-4px) scale(1.01);
+  }
+
+  .controls-section {
+    flex-direction: column;
+  }
+
+  .search-wrapper {
+    width: 100%;
+  }
+
+  .add-user-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .role-grid {
+    grid-template-columns: 1fr;
+  }
+}
