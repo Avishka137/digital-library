@@ -94,7 +94,8 @@ const Dashboard = () => {
       {/* Welcome Section */}
       <div className="dashboard-welcome">
         <div className="welcome-content">
-          <h1>📚 Welcome to VIKLIB </h1> <br/> <h4> Your Digital Library</h4>
+          <h1>📚 Welcome to VIKLIB</h1>
+          <h4>Your Digital Library</h4>
           <p>Manage and explore your book collection with ease</p>
         </div>
         <div className="welcome-time">
@@ -158,8 +159,10 @@ const Dashboard = () => {
               style={{ '--card-color': action.color }}
             >
               <div className="action-icon">{action.icon}</div>
-              <h3>{action.title}</h3>
-              <p>{action.description}</p>
+              <div className="action-text">
+                <h3>{action.title}</h3>
+                <p>{action.description}</p>
+              </div>
               <div className="action-arrow">→</div>
             </Link>
           ))}
