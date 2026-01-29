@@ -195,7 +195,7 @@ const updateBook = async (req, res) => {
   }
 };
 
-// Delete book (Admin only)
+// Delete single book (Admin only) ✨ NEW
 const deleteBook = async (req, res) => {
   console.log('Delete book request from user:', req.user);
   console.log('Book ID:', req.params.id);
@@ -214,7 +214,12 @@ const deleteBook = async (req, res) => {
     if (book.pdf_url) {
       const filePath = path.join(__dirname, '..', book.pdf_url);
       if (fs.existsSync(filePath)) {
-        fs.unlinkSync(filePath);
+        try {
+          fs.unlinkSync(filePath);
+          console.log('Deleted PDF file:', filePath);
+        } catch (fileError) {
+          console.error('Error deleting file:', fileError);
+        }
       }
     }
 
@@ -234,10 +239,73 @@ const deleteBook = async (req, res) => {
   }
 };
 
+// Delete multiple books (Admin only) ✨ NEW
+const deleteMultipleBooks = async (req, res) => {
+  console.log('Delete multiple books request from user:', req.user);
+  console.log('Book IDs:', req.body.ids);
+
+  const { ids } = req.body;
+
+  // Validation
+  if (!ids || !Array.isArray(ids) || ids.length === 0) {
+    return res.status(400).json({
+      success: false,
+      message: 'No book IDs provided'
+    });
+  }
+
+  try {
+    const books = await Book.find({ _id: { $in: ids } });
+
+    let deletedCount = 0;
+    let errorCount = 0;
+
+    // Delete each book
+    for (const book of books) {
+      try {
+        // Delete PDF file if exists
+        if (book.pdf_url) {
+          const filePath = path.join(__dirname, '..', book.pdf_url);
+          if (fs.existsSync(filePath)) {
+            try {
+              fs.unlinkSync(filePath);
+              console.log('Deleted PDF file:', filePath);
+            } catch (fileError) {
+              console.error('Error deleting file:', fileError);
+            }
+          }
+        }
+
+        // Delete from database
+        await Book.findByIdAndDelete(book._id);
+        deletedCount++;
+      } catch (error) {
+        console.error('Error deleting book:', error);
+        errorCount++;
+      }
+    }
+
+    res.json({
+      success: true,
+      message: `Deleted ${deletedCount} book(s), ${errorCount} error(s)`,
+      deleted: deletedCount,
+      errors: errorCount
+    });
+  } catch (error) {
+    console.error('Error deleting multiple books:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error deleting books',
+      error: error.message
+    });
+  }
+};
+
 module.exports = {
   getAllBooks,
   getBookById,
   addBook,
   updateBook,
-  deleteBook
+  deleteBook,
+  deleteMultipleBooks
 };

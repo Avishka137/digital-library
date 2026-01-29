@@ -18,8 +18,7 @@ const Books = () => {
       const data = await response.json();
       
       if (data.success) {
-        setBooks(data.books || []);
-        setSelectedBooks(new Set()); // Clear selection when refreshing
+        setBooks(data.data || []);
       } else {
         setError('Failed to fetch books');
       }
@@ -31,11 +30,9 @@ const Books = () => {
     }
   };
 
-  const handleDownload = (bookId, filename) => {
-    if (filename) {
-      window.open(`http://localhost:5000/uploads/books/${filename}`, '_blank');
-    } else {
-      alert('PDF file not available for this book');
+  const handleDownload = (bookId, pdfUrl) => {
+    if (pdfUrl) {
+      window.open(`http://localhost:5000${pdfUrl}`, '_blank');
     }
   };
 
@@ -55,14 +52,14 @@ const Books = () => {
     if (selectedBooks.size === books.length) {
       setSelectedBooks(new Set());
     } else {
-      const allIds = new Set(books.map((book) => book.id));
+      const allIds = new Set(books.map((book) => book._id));
       setSelectedBooks(allIds);
     }
   };
 
   // Delete single book
   const handleDeleteBook = async (bookId) => {
-    const book = books.find(b => b.id === bookId);
+    const book = books.find(b => b._id === bookId);
     
     if (window.confirm(`Are you sure you want to delete "${book.title}"?`)) {
       try {
@@ -76,17 +73,17 @@ const Books = () => {
         const data = await response.json();
 
         if (data.success) {
-          setBooks(books.filter((b) => b.id !== bookId));
+          setBooks(books.filter((b) => b._id !== bookId));
           setSelectedBooks(new Set(
             Array.from(selectedBooks).filter(id => id !== bookId)
           ));
-          alert('✅ Book deleted successfully');
+          alert('Book deleted successfully');
         } else {
-          alert('❌ Failed to delete book: ' + (data.error || 'Unknown error'));
+          alert('Failed to delete book: ' + (data.message || 'Unknown error'));
         }
       } catch (err) {
         console.error('Error deleting book:', err);
-        alert('❌ Error deleting book. Please try again.');
+        alert('Error deleting book. Please try again.');
       }
     }
   };
@@ -117,13 +114,13 @@ const Books = () => {
           // Refresh books list
           await fetchBooks();
           setSelectedBooks(new Set());
-          alert(`✅ Successfully deleted ${data.deleted} book(s)\n❌ Failed: ${data.errors}`);
+          alert(`Deleted: ${data.deleted}, Failed: ${data.errors}`);
         } else {
-          alert('❌ Failed to delete books: ' + (data.error || 'Unknown error'));
+          alert('Failed to delete books: ' + (data.message || 'Unknown error'));
         }
       } catch (err) {
         console.error('Error deleting books:', err);
-        alert('❌ Error deleting books. Please try again.');
+        alert('Error deleting books. Please try again.');
       }
     }
   };
@@ -213,22 +210,22 @@ const Books = () => {
         <div className="books-grid">
           {books.map((book) => (
             <div 
-              key={book.id} 
-              className={`book-card ${selectedBooks.has(book.id) ? 'selected' : ''}`}
+              key={book._id} 
+              className={`book-card ${selectedBooks.has(book._id) ? 'selected' : ''}`}
             >
               <div className="book-selection">
                 <input 
                   type="checkbox"
-                  checked={selectedBooks.has(book.id)}
-                  onChange={() => toggleSelectBook(book.id)}
+                  checked={selectedBooks.has(book._id)}
+                  onChange={() => toggleSelectBook(book._id)}
                   className="book-checkbox"
                 />
               </div>
 
               <div className="book-cover">
-                {book.coverFilename ? (
+                {book.cover_url ? (
                   <img 
-                    src={`http://localhost:5000/uploads/covers/${book.coverFilename}`}
+                    src={`http://localhost:5000${book.cover_url}`}
                     alt={book.title}
                     onError={(e) => {
                       e.target.style.display = 'none';
@@ -236,7 +233,7 @@ const Books = () => {
                     }}
                   />
                 ) : null}
-                <div className="book-cover-placeholder" style={{ display: book.coverFilename ? 'none' : 'flex' }}>
+                <div className="book-cover-placeholder" style={{ display: book.cover_url ? 'none' : 'flex' }}>
                   📚
                 </div>
               </div>
@@ -249,11 +246,11 @@ const Books = () => {
                   {book.category && (
                     <span className="book-category">🏷️ {book.category}</span>
                   )}
-                  {book.publishedYear && (
-                    <span className="book-year">📅 {book.publishedYear}</span>
+                  {book.year && (
+                    <span className="book-year">📅 {book.year}</span>
                   )}
-                  {book.pages && (
-                    <span className="book-pages">📄 {book.pages} pages</span>
+                  {book.copies_available && (
+                    <span className="book-copies">📚 {book.copies_available} available</span>
                   )}
                 </div>
 
@@ -263,14 +260,14 @@ const Books = () => {
 
                 <div className="book-actions">
                   <button 
-                    onClick={() => handleDownload(book.id, book.pdfFilename)}
+                    onClick={() => handleDownload(book._id, book.pdf_url)}
                     className="btn-primary"
-                    disabled={!book.pdfFilename}
+                    disabled={!book.pdf_url}
                   >
                     📖 Read Book
                   </button>
                   <button 
-                    onClick={() => handleDeleteBook(book.id)}
+                    onClick={() => handleDeleteBook(book._id)}
                     className="btn-danger"
                     title="Delete this book"
                   >
