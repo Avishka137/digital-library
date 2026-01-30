@@ -6,6 +6,7 @@ import AddBook from './components/AddBook';
 import Books from './components/Books';
 import Dashboard from './components/Dashboard';
 import Categories from './components/Categories';
+import Settings from './components/Settings';
 import './App.css';
 
 // Placeholder pages
@@ -20,13 +21,6 @@ const Users = () => (
   <div className="page-content">
     <h1>👥 Users</h1>
     <p>Manage library users here.</p>
-  </div>
-);
-
-const Settings = () => (
-  <div className="page-content">
-    <h1>⚙️ Settings</h1>
-    <p>Configure your library settings.</p>
   </div>
 );
 
