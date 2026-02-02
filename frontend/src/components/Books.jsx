@@ -18,7 +18,7 @@ const Books = () => {
       const data = await response.json();
       
       if (data.success) {
-        setBooks(data.books || []);
+        setBooks(data.data || []);
         setSelectedBooks(new Set()); // Clear selection when refreshing
       } else {
         setError('Failed to fetch books');
