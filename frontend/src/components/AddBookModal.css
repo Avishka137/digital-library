@@ -22,6 +22,7 @@
   overflow-y: auto;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   animation: slideIn 0.3s ease-out;
+  border-top: 4px solid #10b981;
 }
 
 @keyframes slideIn {
@@ -37,19 +38,19 @@
 
 .modal-header {
   padding: 25px 30px;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 2px solid #d1fae5;
   display: flex;
   justify-content: space-between;
   align-items: center;
   position: sticky;
   top: 0;
-  background: white;
+  background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
   z-index: 10;
 }
 
 .modal-header h2 {
   margin: 0;
-  color: #333;
+  color: #047857;
   font-size: 24px;
 }
 
@@ -57,7 +58,7 @@
   background: none;
   border: none;
   font-size: 32px;
-  color: #999;
+  color: #a7f3d0;
   cursor: pointer;
   padding: 0;
   width: 32px;
@@ -69,16 +70,16 @@
 }
 
 .close-btn:hover {
-  color: #333;
+  color: #059669;
 }
 
 .error-message {
   margin: 20px 30px 0;
   padding: 12px;
-  background: #fee;
-  border: 1px solid #fcc;
+  background: #fee2e2;
+  border: 1px solid #fca5a5;
   border-radius: 8px;
-  color: #c33;
+  color: #dc2626;
   font-size: 14px;
 }
 
@@ -101,7 +102,7 @@
   display: block;
   margin-bottom: 8px;
   font-weight: 600;
-  color: #333;
+  color: #047857;
   font-size: 14px;
 }
 
@@ -110,19 +111,21 @@
 .form-group select {
   width: 100%;
   padding: 12px 15px;
-  border: 2px solid #e0e0e0;
+  border: 2px solid #d1fae5;
   border-radius: 8px;
   font-size: 14px;
   font-family: inherit;
   transition: all 0.3s;
+  background-color: #f0fdf4;
 }
 
 .form-group input:focus,
 .form-group textarea:focus,
 .form-group select:focus {
   outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  border-color: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+  background-color: white;
 }
 
 .form-group textarea {
@@ -135,7 +138,7 @@
   gap: 15px;
   justify-content: flex-end;
   padding-top: 20px;
-  border-top: 1px solid #e0e0e0;
+  border-top: 2px solid #d1fae5;
   margin-top: 10px;
 }
 
@@ -151,13 +154,13 @@
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   color: white;
 }
 
 .btn-primary:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
 }
 
 .btn-primary:disabled {
@@ -166,12 +169,12 @@
 }
 
 .btn-secondary {
-  background: #95a5a6;
+  background: #6b7280;
   color: white;
 }
 
 .btn-secondary:hover:not(:disabled) {
-  background: #7f8c8d;
+  background: #4b5563;
 }
 
 /* Responsive */
