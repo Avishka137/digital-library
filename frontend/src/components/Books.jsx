@@ -55,14 +55,14 @@ const Books = () => {
     if (selectedBooks.size === books.length) {
       setSelectedBooks(new Set());
     } else {
-      const allIds = new Set(books.map((book) => book.id));
+      const allIds = new Set(books.map((book) => book._id));
       setSelectedBooks(allIds);
     }
   };
 
   // Delete single book
   const handleDeleteBook = async (bookId) => {
-    const book = books.find(b => b.id === bookId);
+    const book = books.find(b => b._id === bookId);
     
     if (window.confirm(`Are you sure you want to delete "${book.title}"?`)) {
       try {
@@ -76,7 +76,7 @@ const Books = () => {
         const data = await response.json();
 
         if (data.success) {
-          setBooks(books.filter((b) => b.id !== bookId));
+          setBooks(books.filter((b) => b._id !== bookId));
           setSelectedBooks(new Set(
             Array.from(selectedBooks).filter(id => id !== bookId)
           ));
@@ -117,7 +117,7 @@ const Books = () => {
           // Refresh books list
           await fetchBooks();
           setSelectedBooks(new Set());
-          alert(`✅ Successfully deleted ${data.deleted} book(s)\n❌ Failed: ${data.errors}`);
+          alert(`✅ Successfully deleted ${data.deleted} book(s)`);
         } else {
           alert('❌ Failed to delete books: ' + (data.error || 'Unknown error'));
         }
@@ -213,14 +213,14 @@ const Books = () => {
         <div className="books-grid">
           {books.map((book) => (
             <div 
-              key={book.id} 
-              className={`book-card ${selectedBooks.has(book.id) ? 'selected' : ''}`}
+              key={book._id} 
+              className={`book-card ${selectedBooks.has(book._id) ? 'selected' : ''}`}
             >
               <div className="book-selection">
                 <input 
                   type="checkbox"
-                  checked={selectedBooks.has(book.id)}
-                  onChange={() => toggleSelectBook(book.id)}
+                  checked={selectedBooks.has(book._id)}
+                  onChange={() => toggleSelectBook(book._id)}
                   className="book-checkbox"
                 />
               </div>
@@ -263,14 +263,14 @@ const Books = () => {
 
                 <div className="book-actions">
                   <button 
-                    onClick={() => handleDownload(book.id, book.pdfFilename)}
+                    onClick={() => handleDownload(book._id, book.pdfFilename)}
                     className="btn-primary"
                     disabled={!book.pdfFilename}
                   >
                     📖 Read Book
                   </button>
                   <button 
-                    onClick={() => handleDeleteBook(book.id)}
+                    onClick={() => handleDeleteBook(book._id)}
                     className="btn-danger"
                     title="Delete this book"
                   >
