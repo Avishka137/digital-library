@@ -24,7 +24,7 @@
 .book-card-placeholder {
   width: 100%;
   height: 300px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #67e769 0%, #d2ee46 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -60,7 +60,7 @@
 .book-card-category {
   display: inline-block;
   background-color: #e3f2fd;
-  color: #1976d2;
+  color: #0d8f18;
   padding: 4px 12px;
   border-radius: 15px;
   font-size: 12px;
