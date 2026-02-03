@@ -1,6 +1,49 @@
 const express = require('express');
 const router = express.Router();
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
 const Book = require('../models/Book');
+
+// Create uploads directories if they don't exist
+const uploadsDir = path.join(__dirname, '../uploads');
+const booksDir = path.join(uploadsDir, 'books');
+const coversDir = path.join(uploadsDir, 'covers');
+
+[uploadsDir, booksDir, coversDir].forEach(dir => {
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+});
+
+// Configure multer for file uploads
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    if (file.fieldname === 'pdf') {
+      cb(null, booksDir);
+    } else if (file.fieldname === 'cover') {
+      cb(null, coversDir);
+    }
+  },
+  filename: (req, file, cb) => {
+    const uniqueName = Date.now() + '-' + Math.round(Math.random() * 1E9) + path.extname(file.originalname);
+    cb(null, uniqueName);
+  }
+});
+
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 100 * 1024 * 1024 }, // 100MB limit
+  fileFilter: (req, file, cb) => {
+    if (file.fieldname === 'pdf' && file.mimetype !== 'application/pdf') {
+      cb(new Error('Only PDF files allowed for pdf field'));
+    } else if (file.fieldname === 'cover' && !file.mimetype.startsWith('image/')) {
+      cb(new Error('Only image files allowed for cover field'));
+    } else {
+      cb(null, true);
+    }
+  }
+});
 
 // Get all books
 router.get('/', async (req, res) => {
@@ -47,10 +90,10 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// Create new book
-router.post('/', async (req, res) => {
+// Create new book with file upload
+router.post('/', upload.fields([{ name: 'pdf', maxCount: 1 }, { name: 'cover', maxCount: 1 }]), async (req, res) => {
   try {
-    const { title, author, isbn, category, description, publishedYear, pages, coverFilename, pdfFilename } = req.body;
+    const { title, author, isbn, category, description, publishedYear, pages } = req.body;
     
     if (!title || !author) {
       return res.status(400).json({
@@ -58,17 +101,27 @@ router.post('/', async (req, res) => {
         message: 'Title and author are required'
       });
     }
-    
+
+    if (!req.files || !req.files.pdf) {
+      return res.status(400).json({
+        success: false,
+        message: 'PDF file is required'
+      });
+    }
+
+    const pdfFilename = req.files.pdf[0].filename;
+    const coverFilename = req.files.cover ? req.files.cover[0].filename : null;
+
     const newBook = new Book({
       title,
       author,
       isbn,
       category,
       description,
-      publishedYear,
-      pages,
-      coverFilename,
-      pdfFilename
+      publishedYear: publishedYear ? parseInt(publishedYear) : null,
+      pages: pages ? parseInt(pages) : null,
+      pdfFilename,
+      coverFilename
     });
     
     await newBook.save();
@@ -88,11 +141,31 @@ router.post('/', async (req, res) => {
 });
 
 // Update book
-router.put('/:id', async (req, res) => {
+router.put('/:id', upload.fields([{ name: 'pdf', maxCount: 1 }, { name: 'cover', maxCount: 1 }]), async (req, res) => {
   try {
+    const { title, author, isbn, category, description, publishedYear, pages } = req.body;
+    
+    let updateData = {
+      title,
+      author,
+      isbn,
+      category,
+      description,
+      publishedYear: publishedYear ? parseInt(publishedYear) : null,
+      pages: pages ? parseInt(pages) : null
+    };
+
+    // Handle new file uploads
+    if (req.files && req.files.pdf) {
+      updateData.pdfFilename = req.files.pdf[0].filename;
+    }
+    if (req.files && req.files.cover) {
+      updateData.coverFilename = req.files.cover[0].filename;
+    }
+
     const book = await Book.findByIdAndUpdate(
       req.params.id,
-      req.body,
+      updateData,
       { new: true, runValidators: true }
     );
     
@@ -128,6 +201,16 @@ router.delete('/:id', async (req, res) => {
         message: 'Book not found'
       });
     }
+
+    // Delete associated files
+    if (book.pdfFilename) {
+      const pdfPath = path.join(booksDir, book.pdfFilename);
+      if (fs.existsSync(pdfPath)) fs.unlinkSync(pdfPath);
+    }
+    if (book.coverFilename) {
+      const coverPath = path.join(coversDir, book.coverFilename);
+      if (fs.existsSync(coverPath)) fs.unlinkSync(coverPath);
+    }
     
     res.status(200).json({
       success: true,
@@ -155,6 +238,20 @@ router.post('/delete/multiple', async (req, res) => {
       });
     }
     
+    const books = await Book.find({ _id: { $in: ids } });
+    
+    // Delete associated files
+    books.forEach(book => {
+      if (book.pdfFilename) {
+        const pdfPath = path.join(booksDir, book.pdfFilename);
+        if (fs.existsSync(pdfPath)) fs.unlinkSync(pdfPath);
+      }
+      if (book.coverFilename) {
+        const coverPath = path.join(coversDir, book.coverFilename);
+        if (fs.existsSync(coverPath)) fs.unlinkSync(coverPath);
+      }
+    });
+
     const result = await Book.deleteMany({ _id: { $in: ids } });
     
     res.status(200).json({
