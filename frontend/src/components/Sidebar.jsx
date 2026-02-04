@@ -1,11 +1,21 @@
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { LayoutDashboard, Book, Plus, Tag, BookOpen, Users, Settings, LogOut } from 'lucide-react';
 import './Sidebar.css';
 
 const Sidebar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const [user, setUser] = useState(null);
   
+  useEffect(() => {
+    // Get user data from localStorage
+    const userData = localStorage.getItem('user');
+    if (userData) {
+      setUser(JSON.parse(userData));
+    }
+  }, []);
+
   const menuItems = [
     { path: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
     { path: '/books', icon: Book, label: 'All Books' },
@@ -15,6 +25,15 @@ const Sidebar = () => {
     { path: '/users', icon: Users, label: 'Users', adminOnly: true },
     { path: '/settings', icon: Settings, label: 'Settings' },
   ];
+
+  const handleLogout = () => {
+    // Clear user data from localStorage
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    
+    // Redirect to login page
+    navigate('/login');
+  };
 
   return (
     <div className="sidebar">
@@ -43,13 +62,15 @@ const Sidebar = () => {
 
       <div className="sidebar-footer">
         <div className="user-info">
-          <div className="user-avatar">👤</div>
+          <div className="user-avatar">
+            {user?.role === 'admin' ? '👨‍💼' : '👤'}
+          </div>
           <div className="user-details">
-            <h4>Admin</h4>
-            <p>Administrator</p>
+            <h4>{user?.username || 'User'}</h4>
+            <p>{user?.role === 'admin' ? 'Administrator' : 'Member'}</p>
           </div>
         </div>
-        <button className="logout-btn">
+        <button className="logout-btn" onClick={handleLogout}>
           <LogOut size={18} />
           <span>Logout</span>
         </button>
