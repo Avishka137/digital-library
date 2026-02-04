@@ -51,11 +51,11 @@ const isAdmin = (req, res, next) => {
   next();
 };
 
-// Export with both naming conventions for compatibility
+
 module.exports = { 
   authenticateToken, 
   isAdmin,
-  protect: authenticateToken,  // Alias for authenticateToken
-  admin: isAdmin,               // Alias for isAdmin
+  protect: authenticateToken,  
+  admin: isAdmin,              
   SECRET_KEY 
 };

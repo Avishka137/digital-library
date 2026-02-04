@@ -7,6 +7,8 @@ import Books from './components/Books';
 import Dashboard from './components/Dashboard';
 import Categories from './components/Categories';
 import Settings from './components/Settings';
+import Login from './pages/Login';
+import Register from './pages/Register';
 import './App.css';
 
 // Placeholder pages
@@ -27,24 +29,33 @@ const Users = () => (
 function App() {
   return (
     <Router>
-      <div className="app-container">
-        <Sidebar />
-        <div className="main-content">
-          <Header />
-          <div className="content-area">
-            <Routes>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/books" element={<Books />} />
-              <Route path="/add-book" element={<AddBook />} />
-              <Route path="/categories" element={<Categories />} />
-              <Route path="/borrowed" element={<BorrowedBooks />} />
-              <Route path="/users" element={<Users />} />
-              <Route path="/settings" element={<Settings />} />
-            </Routes>
+      <Routes>
+        {/* Public Routes */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        
+        {/* Protected Routes with Sidebar & Header */}
+        <Route path="/*" element={
+          <div className="app-container">
+            <Sidebar />
+            <div className="main-content">
+              <Header />
+              <div className="content-area">
+                <Routes>
+                  <Route path="/" element={<Dashboard />} />
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/books" element={<Books />} />
+                  <Route path="/add-book" element={<AddBook />} />
+                  <Route path="/categories" element={<Categories />} />
+                  <Route path="/borrowed" element={<BorrowedBooks />} />
+                  <Route path="/users" element={<Users />} />
+                  <Route path="/settings" element={<Settings />} />
+                </Routes>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
+        } />
+      </Routes>
     </Router>
   );
 }

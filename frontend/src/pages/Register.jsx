@@ -1,9 +1,6 @@
-// frontend/src/pages/Register.jsx
-// REPLACE YOUR ENTIRE Register.jsx FILE WITH THIS CODE
-
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import './Login.css';
+import './Register.css';
 
 const Register = () => {
   const navigate = useNavigate();
@@ -16,171 +13,204 @@ const Register = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
+  const { username, email, password, confirmPassword } = formData;
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     });
+    setError('');
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-
-    // Validation
-    if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
-      return;
-    }
-
-    if (formData.password.length < 6) {
-      setError('Password must be at least 6 characters');
-      return;
-    }
-
     setLoading(true);
 
+    if (!username || !email || !password || !confirmPassword) {
+      setError('Please fill in all required fields');
+      setLoading(false);
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
+      setLoading(false);
+      return;
+    }
+
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters long');
+      setLoading(false);
+      return;
+    }
+
     try {
-      // Update this URL to match your backend API
       const response = await fetch('http://localhost:5000/api/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-          username: formData.username,
-          email: formData.email,
-          password: formData.password
-        })
+        body: JSON.stringify({ username, email, password, role: 'user' })
       });
 
       const data = await response.json();
 
-      if (response.ok) {
-        // Store token
-        localStorage.setItem('token', data.token);
-        // Redirect to dashboard
-        navigate('/dashboard');
+      if (data.success) {
+        // Show success message and redirect to login
+        alert('Registration successful! Please login.');
+        navigate('/login');
       } else {
         setError(data.message || 'Registration failed');
       }
-    } catch (err) {
-      setError('Failed to connect to server');
-      console.error('Registration error:', err);
+    } catch (error) {
+      console.error('Registration error:', error);
+      setError('Unable to connect to server. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="auth-container">
-      <div className="auth-card">
-        <div className="auth-header">
-          <i className="fas fa-book-reader auth-logo"></i>
-          <h1>Create Account</h1>
-          <p>Join our Digital Library</p>
+    <div className="register-container">
+      <div className="register-wrapper">
+        <div className="register-left">
+          <div className="register-branding">
+            <div className="library-icon">📚</div>
+            <h1>VIKLIB</h1>
+            <p>Join Our Digital Library</p>
+          </div>
+          <div className="register-features">
+            <div className="feature">
+              <span className="feature-icon">📖</span>
+              <div>
+                <h3>Access Thousands of Books</h3>
+                <p>Browse our extensive collection</p>
+              </div>
+            </div>
+            <div className="feature">
+              <span className="feature-icon">⏱️</span>
+              <div>
+                <h3>Easy Borrowing</h3>
+                <p>Borrow and return with ease</p>
+              </div>
+            </div>
+            <div className="feature">
+              <span className="feature-icon">🔔</span>
+              <div>
+                <h3>Get Notifications</h3>
+                <p>Stay updated on due dates</p>
+              </div>
+            </div>
+          </div>
         </div>
 
-        {error && (
-          <div className="error-message">
-            <i className="fas fa-exclamation-circle"></i>
-            {error}
-          </div>
-        )}
+        <div className="register-right">
+          <div className="register-form-container">
+            <h2>Create Account</h2>
+            <p className="register-subtitle">Sign up to start borrowing books</p>
 
-        <form onSubmit={handleSubmit} className="auth-form">
-          <div className="form-group">
-            <label htmlFor="username">
-              <i className="fas fa-user"></i>
-              Username
-            </label>
-            <input
-              type="text"
-              id="username"
-              name="username"
-              value={formData.username}
-              onChange={handleChange}
-              placeholder="Enter your username"
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="email">
-              <i className="fas fa-envelope"></i>
-              Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="Enter your email"
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="password">
-              <i className="fas fa-lock"></i>
-              Password
-            </label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              placeholder="Enter your password"
-              required
-              minLength={6}
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="confirmPassword">
-              <i className="fas fa-lock"></i>
-              Confirm Password
-            </label>
-            <input
-              type="password"
-              id="confirmPassword"
-              name="confirmPassword"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              placeholder="Confirm your password"
-              required
-              minLength={6}
-            />
-          </div>
-
-          <button 
-            type="submit" 
-            className="auth-button"
-            disabled={loading}
-          >
-            {loading ? (
-              <>
-                <i className="fas fa-spinner fa-spin"></i>
-                Creating Account...
-              </>
-            ) : (
-              <>
-                <i className="fas fa-user-plus"></i>
-                Create Account
-              </>
+            {error && (
+              <div className="error-message">
+                <span className="error-icon">⚠️</span>
+                {error}
+              </div>
             )}
-          </button>
-        </form>
 
-        <div className="auth-footer">
-          <p>
-            Already have an account?{' '}
-            <Link to="/login" className="auth-link">
-              Sign In
-            </Link>
-          </p>
+            <form onSubmit={handleSubmit} className="register-form">
+              <div className="form-group">
+                <label htmlFor="username">Username *</label>
+                <div className="input-wrapper">
+                  <span className="input-icon">👤</span>
+                  <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    value={username}
+                    onChange={handleChange}
+                    placeholder="Choose a username"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="email">Email Address *</label>
+                <div className="input-wrapper">
+                  <span className="input-icon">✉️</span>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={email}
+                    onChange={handleChange}
+                    placeholder="your.email@example.com"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="password">Password *</label>
+                <div className="input-wrapper">
+                  <span className="input-icon">🔒</span>
+                  <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    value={password}
+                    onChange={handleChange}
+                    placeholder="Min. 6 characters"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="confirmPassword">Confirm Password *</label>
+                <div className="input-wrapper">
+                  <span className="input-icon">🔒</span>
+                  <input
+                    type="password"
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    value={confirmPassword}
+                    onChange={handleChange}
+                    placeholder="Re-enter password"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="terms-checkbox">
+                <label>
+                  <input type="checkbox" required />
+                  <span>
+                    I agree to the Terms of Service and Privacy Policy
+                  </span>
+                </label>
+              </div>
+
+              <button type="submit" className="register-button" disabled={loading}>
+                {loading ? (
+                  <>
+                    <span className="spinner"></span>
+                    Creating Account...
+                  </>
+                ) : (
+                  'Create Account'
+                )}
+              </button>
+            </form>
+
+            <div className="login-prompt">
+              Already have an account?{' '}
+              <Link to="/login" className="login-link">
+                Sign in
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     </div>
