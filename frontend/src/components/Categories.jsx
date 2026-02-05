@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Book, Brain, Church, Lightbulb, History, User, Beaker, Heart, Plus, Edit2, Trash2, Search, X } from 'lucide-react';
 import './Categories.css';
 
 const Categories = () => {
+  const navigate = useNavigate();
+  
   const [categories, setCategories] = useState([
     { id: 1, name: 'Religious', icon: 'Church', color: 'purple', count: 45 },
     { id: 2, name: 'Psychology', icon: 'Brain', color: 'blue', count: 32 },
@@ -45,6 +48,11 @@ const Categories = () => {
     cat.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  // Navigate to books filtered by category
+  const handleCategoryClick = (categoryName) => {
+    navigate(`/books?category=${encodeURIComponent(categoryName)}`);
+  };
+
   const handleAddCategory = () => {
     if (newCategory.name.trim()) {
       const newCat = {
@@ -59,7 +67,8 @@ const Categories = () => {
     }
   };
 
-  const handleEditCategory = (category) => {
+  const handleEditCategory = (category, e) => {
+    e.stopPropagation(); // Prevent navigation when clicking edit
     setEditingCategory(category);
     setNewCategory({ name: category.name, icon: category.icon, color: category.color });
     setIsAddModalOpen(true);
@@ -76,7 +85,8 @@ const Categories = () => {
     }
   };
 
-  const handleDeleteCategory = (id) => {
+  const handleDeleteCategory = (id, e) => {
+    e.stopPropagation(); // Prevent navigation when clicking delete
     if (window.confirm('Are you sure you want to delete this category?')) {
       setCategories(categories.filter(cat => cat.id !== id));
     }
@@ -138,21 +148,25 @@ const Categories = () => {
         {filteredCategories.length > 0 ? (
           <div className="categories-grid">
             {filteredCategories.map((category) => (
-              <div key={category.id} className="category-card">
+              <div 
+                key={category.id} 
+                className="category-card"
+                onClick={() => handleCategoryClick(category.name)}
+              >
                 <div className="card-header">
                   <div className={`category-icon-container color-${category.color}`}>
                     {renderIcon(category.icon, "category-icon")}
                   </div>
                   <div className="card-actions">
                     <button
-                      onClick={() => handleEditCategory(category)}
+                      onClick={(e) => handleEditCategory(category, e)}
                       className="edit-btn"
                       title="Edit category"
                     >
                       <Edit2 className="action-icon" />
                     </button>
                     <button
-                      onClick={() => handleDeleteCategory(category.id)}
+                      onClick={(e) => handleDeleteCategory(category.id, e)}
                       className="delete-btn"
                       title="Delete category"
                     >

@@ -45,15 +45,24 @@ const upload = multer({
   }
 });
 
-// Get all books
+// Get all books (with optional category filter)
 router.get('/', async (req, res) => {
   try {
-    const books = await Book.find().sort({ createdAt: -1 });
+    const { category } = req.query;
+    
+    // Build filter object
+    let filter = {};
+    if (category && category !== 'All') {
+      filter.category = category;
+    }
+    
+    const books = await Book.find(filter).sort({ createdAt: -1 });
     
     res.status(200).json({
       success: true,
       message: 'Books fetched successfully',
-      data: books
+      data: books,
+      filter: category || 'All'
     });
   } catch (error) {
     res.status(500).json({
@@ -85,6 +94,27 @@ router.get('/:id', async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Error fetching book',
+      error: error.message
+    });
+  }
+});
+
+// Get books by category (alternative endpoint)
+router.get('/category/:categoryName', async (req, res) => {
+  try {
+    const { categoryName } = req.params;
+    const books = await Book.find({ category: categoryName }).sort({ createdAt: -1 });
+    
+    res.status(200).json({
+      success: true,
+      message: `Books in ${categoryName} category fetched successfully`,
+      data: books,
+      category: categoryName
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching books by category',
       error: error.message
     });
   }
