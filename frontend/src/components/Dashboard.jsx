@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { Book, Upload, Tag, TrendingUp, Users, BookOpen } from 'lucide-react';
 import './Dashboard.css';
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   const [stats, setStats] = useState({
     totalBooks: 0,
-    categories: 0,
-    recentUploads: 0,
-    totalPages: 0
+    categories: 6,
+    recentlyAdded: 0,
+    borrowedBooks: 0
   });
   const [recentBooks, setRecentBooks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -22,69 +24,64 @@ const Dashboard = () => {
       const data = await response.json();
       
       if (data.success) {
-        const books = data.books || [];
-        
-        // Calculate statistics
-        const categories = [...new Set(books.map(book => book.category).filter(Boolean))];
-        const totalPages = books.reduce((sum, book) => sum + (parseInt(book.pages) || 0), 0);
-        const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-        const recentUploads = books.filter(book => new Date(book.uploadedAt) > oneWeekAgo).length;
-        
+        const books = data.data || [];
         setStats({
           totalBooks: books.length,
-          categories: categories.length,
-          recentUploads: recentUploads,
-          totalPages: totalPages
+          categories: 6,
+          recentlyAdded: books.slice(0, 5).length,
+          borrowedBooks: 0
         });
-        
-        // Get 3 most recent books
-        const recent = books
-          .sort((a, b) => new Date(b.uploadedAt) - new Date(a.uploadedAt))
-          .slice(0, 3);
-        setRecentBooks(recent);
+        setRecentBooks(books.slice(0, 6));
       }
+      setLoading(false);
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
-    } finally {
       setLoading(false);
     }
   };
 
-  const quickActions = [
+  const statCards = [
     {
-      icon: '📤',
-      title: 'Upload Book',
-      description: 'Add a new book to your library',
-      link: '/add-book',
-      color: '#667eea'
+      title: 'Total Books',
+      value: stats.totalBooks,
+      icon: Book,
+      color: '#2ecc71',
+      bgColor: '#d5f4e6',
+      link: '/books'
     },
     {
-      icon: '📚',
-      title: 'Browse Books',
-      description: 'View all books in your collection',
-      link: '/books',
-      color: '#764ba2'
-    },
-    {
-      icon: '🏷️',
       title: 'Categories',
-      description: 'Organize your books by category',
-      link: '/categories',
-      color: '#f093fb'
+      value: stats.categories,
+      icon: Tag,
+      color: '#3498db',
+      bgColor: '#d6eaf8',
+      link: '/categories'
     },
     {
-      icon: '⚙️',
-      title: 'Settings',
-      description: 'Configure your library preferences',
-      link: '/settings',
-      color: '#4facfe'
+      title: 'Recently Added',
+      value: stats.recentlyAdded,
+      icon: TrendingUp,
+      color: '#f39c12',
+      bgColor: '#fdebd0',
+      link: '/books'
+    },
+    {
+      title: 'Borrowed Books',
+      value: stats.borrowedBooks,
+      icon: BookOpen,
+      color: '#9b59b6',
+      bgColor: '#ebdef0',
+      link: '/borrowed'
     }
   ];
 
   if (loading) {
     return (
       <div className="dashboard-container">
-        <div className="loading-dashboard">Loading dashboard...</div>
+        <div className="loading-dashboard">
+          <div className="spinner"></div>
+          <p>Loading dashboard...</p>
+        </div>
       </div>
     );
   }
@@ -92,106 +89,136 @@ const Dashboard = () => {
   return (
     <div className="dashboard-container">
       {/* Welcome Section */}
-      <div className="dashboard-welcome">
+      <div className="welcome-section">
         <div className="welcome-content">
-          <h1>📚 Welcome to VIKLIB</h1>
-          <h4>Your Digital Library</h4>
-          <p>Manage and explore your book collection with ease</p>
-        </div>
-        <div className="welcome-time">
-          {new Date().toLocaleDateString('en-US', { 
-            weekday: 'long', 
-            year: 'numeric', 
-            month: 'long', 
-            day: 'numeric' 
-          })}
+          <div className="welcome-icon">
+            <Book size={48} />
+          </div>
+          <div className="welcome-text">
+            <h1>Welcome to VIKLIB</h1>
+            <p>Your Digital Library Management System</p>
+          </div>
         </div>
       </div>
 
-      {/* Statistics Cards */}
+      {/* Stats Cards */}
       <div className="stats-grid">
-        <div className="stat-card stat-card-1">
-          <div className="stat-icon">📚</div>
-          <div className="stat-details">
-            <h3>{stats.totalBooks}</h3>
-            <p>Total Books</p>
-          </div>
-          <div className="stat-trend">↗️ Growing</div>
-        </div>
-
-        <div className="stat-card stat-card-2">
-          <div className="stat-icon">🏷️</div>
-          <div className="stat-details">
-            <h3>{stats.categories}</h3>
-            <p>Categories</p>
-          </div>
-          <div className="stat-trend">📊 Organized</div>
-        </div>
-
-        <div className="stat-card stat-card-3">
-          <div className="stat-icon">⭐</div>
-          <div className="stat-details">
-            <h3>{stats.recentUploads}</h3>
-            <p>This Week</p>
-          </div>
-          <div className="stat-trend">🔥 Active</div>
-        </div>
-
-        <div className="stat-card stat-card-4">
-          <div className="stat-icon">📄</div>
-          <div className="stat-details">
-            <h3>{stats.totalPages.toLocaleString()}</h3>
-            <p>Total Pages</p>
-          </div>
-          <div className="stat-trend">📖 Reading</div>
-        </div>
+        {statCards.map((stat, index) => {
+          const Icon = stat.icon;
+          return (
+            <div 
+              key={index} 
+              className="stat-card"
+              onClick={() => navigate(stat.link)}
+              style={{ 
+                borderLeft: `4px solid ${stat.color}`,
+                cursor: 'pointer'
+              }}
+            >
+              <div className="stat-icon" style={{ backgroundColor: stat.bgColor }}>
+                <Icon size={32} color={stat.color} />
+              </div>
+              <div className="stat-info">
+                <p className="stat-label">{stat.title}</p>
+                <h2 className="stat-value" style={{ color: stat.color }}>
+                  {stat.value}
+                </h2>
+              </div>
+            </div>
+          );
+        })}
       </div>
 
       {/* Quick Actions */}
       <div className="quick-actions-section">
-        <h2>⚡ Quick Actions</h2>
+        <h2 className="section-title">📋 Quick Actions</h2>
         <div className="quick-actions-grid">
-          {quickActions.map((action, index) => (
-            <Link 
-              key={index} 
-              to={action.link} 
-              className="quick-action-card"
-              style={{ '--card-color': action.color }}
-            >
-              <div className="action-icon">{action.icon}</div>
-              <div className="action-text">
-                <h3>{action.title}</h3>
-                <p>{action.description}</p>
-              </div>
-              <div className="action-arrow">→</div>
-            </Link>
-          ))}
+          <button 
+            className="action-card"
+            onClick={() => navigate('/add-book')}
+          >
+            <div className="action-icon" style={{ background: 'linear-gradient(135deg, #2ecc71 0%, #27ae60 100%)' }}>
+              <Upload size={28} />
+            </div>
+            <div className="action-content">
+              <h3>Upload Book</h3>
+              <p>Add a new book to your library</p>
+            </div>
+          </button>
+
+          <button 
+            className="action-card"
+            onClick={() => navigate('/books')}
+          >
+            <div className="action-icon" style={{ background: 'linear-gradient(135deg, #3498db 0%, #2980b9 100%)' }}>
+              <Book size={28} />
+            </div>
+            <div className="action-content">
+              <h3>View All Books</h3>
+              <p>Browse your book collection</p>
+            </div>
+          </button>
+
+          <button 
+            className="action-card"
+            onClick={() => navigate('/categories')}
+          >
+            <div className="action-icon" style={{ background: 'linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%)' }}>
+              <Tag size={28} />
+            </div>
+            <div className="action-content">
+              <h3>Manage Categories</h3>
+              <p>Organize your library</p>
+            </div>
+          </button>
+
+          <button 
+            className="action-card"
+            onClick={() => navigate('/users')}
+          >
+            <div className="action-icon" style={{ background: 'linear-gradient(135deg, #f39c12 0%, #e67e22 100%)' }}>
+              <Users size={28} />
+            </div>
+            <div className="action-content">
+              <h3>Manage Users</h3>
+              <p>View and manage library users</p>
+            </div>
+          </button>
         </div>
       </div>
 
-      {/* Recent Books */}
+      {/* Recently Added Books */}
       <div className="recent-books-section">
         <div className="section-header">
-          <h2>📖 Recently Added Books</h2>
-          <Link to="/books" className="view-all-link">
+          <h2 className="section-title">📚 Recently Added Books</h2>
+          <button 
+            className="view-all-link"
+            onClick={() => navigate('/books')}
+          >
             View All →
-          </Link>
+          </button>
         </div>
-
+        
         {recentBooks.length === 0 ? (
-          <div className="no-recent-books">
-            <div className="empty-icon">📚</div>
-            <h3>No Books Yet</h3>
-            <p>Start building your library by uploading your first book!</p>
-            <Link to="/add-book" className="upload-first-book-btn">
-              ➕ Upload Your First Book
-            </Link>
+          <div className="empty-recent">
+            <Book size={48} color="#ccc" />
+            <p>No books in your library yet</p>
+            <button 
+              className="upload-first-btn"
+              onClick={() => navigate('/add-book')}
+            >
+              Upload Your First Book
+            </button>
           </div>
         ) : (
           <div className="recent-books-grid">
-            {recentBooks.map((book, index) => (
-              <div key={index} className="recent-book-card">
-                <div className="book-cover-mini">
+            {recentBooks.map((book) => (
+              <div 
+                key={book._id} 
+                className="recent-book-card"
+                onClick={() => navigate('/books')}
+              >
+                <div className="recent-book-cover">
                   {book.coverFilename ? (
                     <img 
                       src={`http://localhost:5000/uploads/covers/${book.coverFilename}`}
@@ -202,57 +229,21 @@ const Dashboard = () => {
                       }}
                     />
                   ) : null}
-                  <div 
-                    className="book-cover-placeholder-mini" 
-                    style={{ display: book.coverFilename ? 'none' : 'flex' }}
-                  >
+                  <div className="recent-book-placeholder" style={{ display: book.coverFilename ? 'none' : 'flex' }}>
                     📚
                   </div>
                 </div>
-                <div className="book-info-mini">
+                <div className="recent-book-info">
                   <h4>{book.title}</h4>
-                  <p className="book-author-mini">✍️ {book.author}</p>
-                  <div className="book-meta-mini">
-                    {book.category && (
-                      <span className="category-badge">{book.category}</span>
-                    )}
-                    {book.publishedYear && (
-                      <span className="year-badge">{book.publishedYear}</span>
-                    )}
-                  </div>
+                  <p>{book.author}</p>
+                  {book.category && (
+                    <span className="recent-book-category">{book.category}</span>
+                  )}
                 </div>
               </div>
             ))}
           </div>
         )}
-      </div>
-
-      {/* Activity Feed */}
-      <div className="activity-feed-section">
-        <h2>📊 Library Statistics</h2>
-        <div className="activity-grid">
-          <div className="activity-item">
-            <div className="activity-icon">📚</div>
-            <div className="activity-content">
-              <h4>Total Collection</h4>
-              <p>{stats.totalBooks} books across {stats.categories} categories</p>
-            </div>
-          </div>
-          <div className="activity-item">
-            <div className="activity-icon">📈</div>
-            <div className="activity-content">
-              <h4>Recent Activity</h4>
-              <p>{stats.recentUploads} books added in the last 7 days</p>
-            </div>
-          </div>
-          <div className="activity-item">
-            <div className="activity-icon">📖</div>
-            <div className="activity-content">
-              <h4>Reading Progress</h4>
-              <p>{stats.totalPages.toLocaleString()} pages available to read</p>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );
