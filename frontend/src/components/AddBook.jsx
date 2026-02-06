@@ -159,12 +159,12 @@ const AddBook = () => {
             >
               <option value="">Select category</option>
               <option value="Religious">Religious</option>
+              <option value="Psychology">Psychology</option>
               <option value="Novels">Novels</option>
               <option value="Science">Science</option>
               <option value="History">History</option>
               <option value="Biography">Biography</option>
               <option value="Business">Business</option>
-              <option value="Phycology">Phycology</option>
             </select>
           </div>
         </div>
@@ -263,7 +263,7 @@ const AddBook = () => {
           ) : (
             <>
               <span>✨</span>
-            Upload Book 
+              Upload Book 
             </>
           )}
         </button>

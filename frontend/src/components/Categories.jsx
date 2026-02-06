@@ -1,273 +1,102 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Book, Brain, Church, Lightbulb, History, User, Beaker, Heart, Plus, Edit2, Trash2, Search, X } from 'lucide-react';
 import './Categories.css';
 
 const Categories = () => {
   const navigate = useNavigate();
-  
-  const [categories, setCategories] = useState([
-    { id: 1, name: 'Religious', icon: 'Church', color: 'purple', count: 45 },
-    { id: 2, name: 'Psychology', icon: 'Brain', color: 'blue', count: 32 },
-    { id: 3, name: 'Novels', icon: 'Book', color: 'green', count: 78 },
-    { id: 4, name: 'Science', icon: 'Beaker', color: 'red', count: 56 },
-    { id: 5, name: 'History', icon: 'History', color: 'yellow', count: 41 },
-    { id: 6, name: 'Biography', icon: 'User', color: 'indigo', count: 29 }
-  ]);
-  
-  const [searchTerm, setSearchTerm] = useState('');
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [editingCategory, setEditingCategory] = useState(null);
-  const [newCategory, setNewCategory] = useState({ name: '', icon: 'Book', color: 'blue' });
+  const [bookCounts, setBookCounts] = useState({
+    Religious: 0,
+    Psychology: 0,
+    Novels: 0,
+    Science: 0,
+    History: 0,
+    Biography: 0,
+    Business: 0
+  });
 
-  const iconComponents = {
-    Church: Church,
-    Brain: Brain,
-    Book: Book,
-    Beaker: Beaker,
-    History: History,
-    User: User,
-    Lightbulb: Lightbulb,
-    Heart: Heart
-  };
-
-  const colorOptions = [
-    { name: 'Blue', value: 'blue' },
-    { name: 'Purple', value: 'purple' },
-    { name: 'Green', value: 'green' },
-    { name: 'Red', value: 'red' },
-    { name: 'Yellow', value: 'yellow' },
-    { name: 'Indigo', value: 'indigo' },
-    { name: 'Pink', value: 'pink' },
-    { name: 'Teal', value: 'teal' }
+  const categories = [
+    { name: 'Religious', icon: '🕌', color: '#9b59b6', books: bookCounts.Religious },
+    { name: 'Psychology', icon: '🧠', color: '#16a085', books: bookCounts.Psychology },
+    { name: 'Novels', icon: '📖', color: '#27ae60', books: bookCounts.Novels },
+    { name: 'Science', icon: '🔬', color: '#e74c3c', books: bookCounts.Science },
+    { name: 'History', icon: '🕰️', color: '#f39c12', books: bookCounts.History },
+    { name: 'Biography', icon: '👤', color: '#5b5fd8', books: bookCounts.Biography },
+    { name: 'Business', icon: '💼', color: '#3498db', books: bookCounts.Business },
   ];
 
-  const iconOptions = ['Book', 'Brain', 'Church', 'Beaker', 'History', 'User', 'Lightbulb', 'Heart'];
+  useEffect(() => {
+    fetchBookCounts();
+  }, []);
 
-  const filteredCategories = categories.filter(cat =>
-    cat.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const fetchBookCounts = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/api/books');
+      const data = await response.json();
+      
+      if (data.success) {
+        const counts = {};
+        
+        // Count books in each category
+        data.data.forEach(book => {
+          const category = book.category || 'Novels'; // Default to Novels if no category
+          counts[category] = (counts[category] || 0) + 1;
+        });
+        
+        setBookCounts(counts);
+      }
+    } catch (error) {
+      console.error('Error fetching books:', error);
+    }
+  };
 
-  // Navigate to books filtered by category
   const handleCategoryClick = (categoryName) => {
-    navigate(`/books?category=${encodeURIComponent(categoryName)}`);
-  };
-
-  const handleAddCategory = () => {
-    if (newCategory.name.trim()) {
-      const newCat = {
-        id: Math.max(...categories.map(c => c.id), 0) + 1,
-        name: newCategory.name,
-        icon: newCategory.icon,
-        color: newCategory.color,
-        count: 0
-      };
-      setCategories([...categories, newCat]);
-      resetForm();
-    }
-  };
-
-  const handleEditCategory = (category, e) => {
-    e.stopPropagation(); // Prevent navigation when clicking edit
-    setEditingCategory(category);
-    setNewCategory({ name: category.name, icon: category.icon, color: category.color });
-    setIsAddModalOpen(true);
-  };
-
-  const handleUpdateCategory = () => {
-    if (editingCategory && newCategory.name.trim()) {
-      setCategories(categories.map(cat =>
-        cat.id === editingCategory.id
-          ? { ...cat, name: newCategory.name, icon: newCategory.icon, color: newCategory.color }
-          : cat
-      ));
-      resetForm();
-    }
-  };
-
-  const handleDeleteCategory = (id, e) => {
-    e.stopPropagation(); // Prevent navigation when clicking delete
-    if (window.confirm('Are you sure you want to delete this category?')) {
-      setCategories(categories.filter(cat => cat.id !== id));
-    }
-  };
-
-  const resetForm = () => {
-    setIsAddModalOpen(false);
-    setEditingCategory(null);
-    setNewCategory({ name: '', icon: 'Book', color: 'blue' });
-  };
-
-  const renderIcon = (iconName, className = "") => {
-    const IconComponent = iconComponents[iconName] || Book;
-    return <IconComponent className={className} />;
+    // Navigate to books page with category filter
+    navigate(`/books?category=${categoryName}`);
   };
 
   return (
-    <div className="categories-page">
-      <div className="categories-container">
-        {/* Header */}
-        <div className="page-header">
-          <div className="header-content">
-            <div className="header-icon">
-              <Book className="icon" />
-            </div>
-            <div className="header-text">
-              <h1 className="gradient-text">Categories</h1>
-              <p className="subtitle">Organize your digital library</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Search and Add Button */}
-        <div className="controls-section">
-          <div className="search-wrapper">
-            <Search className="search-icon" />
-            <input
-              type="text"
-              placeholder="Search categories..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="search-input"
-            />
-          </div>
-          <button
-            onClick={() => {
-              setEditingCategory(null);
-              setNewCategory({ name: '', icon: 'Book', color: 'blue' });
-              setIsAddModalOpen(true);
-            }}
-            className="add-category-btn"
-          >
-            <Plus className="btn-icon" />
-            Add Category
-          </button>
-        </div>
-
-        {/* Categories Grid */}
-        {filteredCategories.length > 0 ? (
-          <div className="categories-grid">
-            {filteredCategories.map((category) => (
-              <div 
-                key={category.id} 
-                className="category-card"
-                onClick={() => handleCategoryClick(category.name)}
-              >
-                <div className="card-header">
-                  <div className={`category-icon-container color-${category.color}`}>
-                    {renderIcon(category.icon, "category-icon")}
-                  </div>
-                  <div className="card-actions">
-                    <button
-                      onClick={(e) => handleEditCategory(category, e)}
-                      className="edit-btn"
-                      title="Edit category"
-                    >
-                      <Edit2 className="action-icon" />
-                    </button>
-                    <button
-                      onClick={(e) => handleDeleteCategory(category.id, e)}
-                      className="delete-btn"
-                      title="Delete category"
-                    >
-                      <Trash2 className="action-icon" />
-                    </button>
-                  </div>
-                </div>
-                <h3 className="category-name">{category.name}</h3>
-                <div className="category-info">
-                  <div className={`color-dot color-${category.color}`}></div>
-                  <p className="book-count">
-                    {category.count} {category.count === 1 ? 'book' : 'books'}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="empty-state">
-            <div className="empty-icon">
-              <Book className="icon" />
-            </div>
-            <h3 className="empty-title">No categories found</h3>
-            <p className="empty-text">Try adjusting your search or create a new category</p>
-          </div>
-        )}
-
-        {/* Add/Edit Modal */}
-        {isAddModalOpen && (
-          <div className="modal-overlay" onClick={resetForm}>
-            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-              <div className="modal-header">
-                <h2 className="modal-title">
-                  {editingCategory ? 'Edit Category' : 'Create Category'}
-                </h2>
-                <button onClick={resetForm} className="close-btn">
-                  <X className="close-icon" />
-                </button>
-              </div>
-              
-              <div className="modal-body">
-                <div className="form-group">
-                  <label className="form-label">Category Name</label>
-                  <input
-                    type="text"
-                    value={newCategory.name}
-                    onChange={(e) => setNewCategory({ ...newCategory, name: e.target.value })}
-                    placeholder="e.g., Science Fiction"
-                    className="form-input"
-                    autoFocus
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label className="form-label">Choose Icon</label>
-                  <div className="icon-grid">
-                    {iconOptions.map((icon) => (
-                      <button
-                        key={icon}
-                        onClick={() => setNewCategory({ ...newCategory, icon })}
-                        className={`icon-selector ${newCategory.icon === icon ? 'selected' : ''}`}
-                      >
-                        {renderIcon(icon, "selector-icon")}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="form-group">
-                  <label className="form-label">Pick Color</label>
-                  <div className="color-grid">
-                    {colorOptions.map((colorObj) => (
-                      <button
-                        key={colorObj.value}
-                        onClick={() => setNewCategory({ ...newCategory, color: colorObj.value })}
-                        className={`color-option color-${colorObj.value} ${
-                          newCategory.color === colorObj.value ? 'selected' : ''
-                        }`}
-                        title={colorObj.name}
-                      />
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <div className="modal-footer">
-                <button onClick={resetForm} className="cancel-btn">
-                  Cancel
-                </button>
-                <button
-                  onClick={editingCategory ? handleUpdateCategory : handleAddCategory}
-                  disabled={!newCategory.name.trim()}
-                  className="submit-btn"
-                >
-                  {editingCategory ? 'Update' : 'Create'}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+    <div className="categories-container">
+      <div className="categories-header">
+        <h1>📚 Browse by Category</h1>
+        <p>Explore books organized by topics</p>
       </div>
+
+      <div className="search-bar">
+        <input 
+          type="text" 
+          placeholder="Search categories..." 
+          className="category-search"
+        />
+      </div>
+
+      <div className="categories-grid">
+        {categories.map((category, index) => (
+          <div 
+            key={index} 
+            className="category-card"
+            onClick={() => handleCategoryClick(category.name)}
+            style={{ cursor: 'pointer' }}
+          >
+            <div 
+              className="category-icon" 
+              style={{ backgroundColor: category.color }}
+            >
+              <span>{category.icon}</span>
+            </div>
+            <h3>{category.name}</h3>
+            <p className="book-count">
+              <span style={{ color: category.color }}>●</span> {category.books} books
+            </p>
+          </div>
+        ))}
+      </div>
+
+      <button 
+        className="add-category-btn"
+        onClick={() => navigate('/upload')}
+      >
+        <span>+</span> Add New Book
+      </button>
     </div>
   );
 };

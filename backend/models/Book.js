@@ -19,7 +19,10 @@ const bookSchema = new mongoose.Schema(
     },
     category: {
       type: String,
-      trim: true
+      required: true,  // Made required so every book has a category
+      trim: true,
+      enum: ['Religious', 'Psychology', 'Novels', 'Science', 'History', 'Biography', 'Business'],  // Match your categories page
+      default: 'Novels'
     },
     description: {
       type: String,
@@ -48,5 +51,8 @@ const bookSchema = new mongoose.Schema(
     timestamps: true
   }
 );
+
+// Index for faster category queries
+bookSchema.index({ category: 1 });
 
 module.exports = mongoose.model('Book', bookSchema);
