@@ -111,8 +111,7 @@ const Dashboard = () => {
               className="stat-card"
               onClick={() => navigate(stat.link)}
               style={{ 
-                borderLeft: `4px solid ${stat.color}`,
-                cursor: 'pointer'
+                borderLeft: `4px solid ${stat.color}`
               }}
             >
               <div className="stat-icon" style={{ backgroundColor: stat.bgColor }}>
