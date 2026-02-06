@@ -1,15 +1,49 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import './Books.css';
 
 const Books = () => {
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const categoryFromUrl = searchParams.get('category');
+
   const [books, setBooks] = useState([]);
+  const [allBooks, setAllBooks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedBooks, setSelectedBooks] = useState(new Set());
+  const [selectedCategory, setSelectedCategory] = useState(categoryFromUrl || 'All');
+  const [categories] = useState(['All', 'Religious', 'Psychology', 'Novels', 'Science', 'History', 'Biography']);
 
+  // Update selected category when URL changes
+  useEffect(() => {
+    if (categoryFromUrl) {
+      setSelectedCategory(categoryFromUrl);
+    } else {
+      setSelectedCategory('All');
+    }
+  }, [categoryFromUrl]);
+
+  // Fetch books on component mount
   useEffect(() => {
     fetchBooks();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Filter books using useCallback to prevent infinite loops
+  const filterBooksByCategory = useCallback(() => {
+    if (selectedCategory === 'All') {
+      setBooks(allBooks);
+    } else {
+      const filtered = allBooks.filter(book => book.category === selectedCategory);
+      setBooks(filtered);
+    }
+  }, [selectedCategory, allBooks]);
+
+  // Filter books whenever category or allBooks changes
+  useEffect(() => {
+    filterBooksByCategory();
+  }, [filterBooksByCategory]);
 
   const fetchBooks = async () => {
     try {
@@ -18,8 +52,8 @@ const Books = () => {
       const data = await response.json();
       
       if (data.success) {
-        setBooks(data.data || []);
-        setSelectedBooks(new Set()); // Clear selection when refreshing
+        setAllBooks(data.data || []);
+        setSelectedBooks(new Set());
       } else {
         setError('Failed to fetch books');
       }
@@ -31,6 +65,16 @@ const Books = () => {
     }
   };
 
+  const handleCategoryChange = (category) => {
+    setSelectedCategory(category);
+    setSelectedBooks(new Set());
+    if (category === 'All') {
+      navigate('/books');
+    } else {
+      navigate(`/books?category=${encodeURIComponent(category)}`);
+    }
+  };
+
   const handleDownload = (bookId, filename) => {
     if (filename) {
       window.open(`http://localhost:5000/uploads/books/${filename}`, '_blank');
@@ -39,7 +83,6 @@ const Books = () => {
     }
   };
 
-  // Toggle individual book selection
   const toggleSelectBook = (bookId) => {
     const newSelected = new Set(selectedBooks);
     if (newSelected.has(bookId)) {
@@ -50,9 +93,8 @@ const Books = () => {
     setSelectedBooks(newSelected);
   };
 
-  // Toggle select all books
   const toggleSelectAll = () => {
-    if (selectedBooks.size === books.length) {
+    if (selectedBooks.size === books.length && books.length > 0) {
       setSelectedBooks(new Set());
     } else {
       const allIds = new Set(books.map((book) => book._id));
@@ -60,7 +102,6 @@ const Books = () => {
     }
   };
 
-  // Delete single book
   const handleDeleteBook = async (bookId) => {
     const book = books.find(b => b._id === bookId);
     
@@ -76,7 +117,7 @@ const Books = () => {
         const data = await response.json();
 
         if (data.success) {
-          setBooks(books.filter((b) => b._id !== bookId));
+          setAllBooks(allBooks.filter((b) => b._id !== bookId));
           setSelectedBooks(new Set(
             Array.from(selectedBooks).filter(id => id !== bookId)
           ));
@@ -91,7 +132,6 @@ const Books = () => {
     }
   };
 
-  // Delete selected books
   const handleDeleteSelected = async () => {
     if (selectedBooks.size === 0) {
       alert('Please select at least one book to delete');
@@ -114,7 +154,6 @@ const Books = () => {
         const data = await response.json();
 
         if (data.success) {
-          // Refresh books list
           await fetchBooks();
           setSelectedBooks(new Set());
           alert(`✅ Successfully deleted ${data.deleted} book(s)`);
@@ -156,12 +195,47 @@ const Books = () => {
   return (
     <div className="books-container">
       <div className="books-header">
-        <h1>📚 All Books</h1>
+        <h1>📚 {selectedCategory === 'All' ? 'All Books' : `${selectedCategory} Books`}</h1>
         <p className="books-count">
           {books.length === 0 
-            ? 'No books uploaded yet' 
-            : `${books.length} book${books.length !== 1 ? 's' : ''} in library`}
+            ? selectedCategory !== 'All' 
+              ? `No books in ${selectedCategory} category` 
+              : 'No books uploaded yet'
+            : `${books.length} book${books.length !== 1 ? 's' : ''} ${selectedCategory !== 'All' ? `in ${selectedCategory}` : 'in library'}`}
         </p>
+      </div>
+
+      {selectedCategory !== 'All' && (
+        <div className="active-filter-badge">
+          <span className="filter-icon">🔖</span>
+          <span>Filtered by: <strong>{selectedCategory}</strong></span>
+          <button 
+            onClick={() => handleCategoryChange('All')}
+            className="clear-filter-btn-badge"
+            title="Clear filter"
+          >
+            ✖️
+          </button>
+        </div>
+      )}
+
+      <div className="category-filter-section">
+        <div className="category-filter-scroll">
+          {categories.map((category) => (
+            <button
+              key={category}
+              onClick={() => handleCategoryChange(category)}
+              className={`category-filter-btn ${selectedCategory === category ? 'active' : ''}`}
+            >
+              {category}
+              {category !== 'All' && (
+                <span className="category-count">
+                  {allBooks.filter(b => b.category === category).length}
+                </span>
+              )}
+            </button>
+          ))}
+        </div>
       </div>
 
       {books.length > 0 && (
@@ -176,7 +250,7 @@ const Books = () => {
             />
             <label htmlFor="select-all">
               {selectedBooks.size === 0 
-                ? 'Select all books' 
+                ? `Select all ${selectedCategory !== 'All' ? selectedCategory + ' ' : ''}books` 
                 : `${selectedBooks.size} book${selectedBooks.size !== 1 ? 's' : ''} selected`}
             </label>
           </div>
@@ -203,11 +277,24 @@ const Books = () => {
       {books.length === 0 ? (
         <div className="empty-state">
           <div className="empty-icon">📖</div>
-          <h2>No Books Yet</h2>
-          <p>Start building your digital library by uploading your first book!</p>
-          <a href="/add-book" className="upload-link">
-            ➕ Upload Book
-          </a>
+          <h2>No Books {selectedCategory !== 'All' ? `in ${selectedCategory}` : 'Yet'}</h2>
+          <p>
+            {selectedCategory !== 'All' 
+              ? `There are no books in the ${selectedCategory} category yet.`
+              : 'Start building your digital library by uploading your first book!'}
+          </p>
+          {selectedCategory !== 'All' ? (
+            <button 
+              onClick={() => handleCategoryChange('All')}
+              className="view-all-btn-empty"
+            >
+              📚 View All Books
+            </button>
+          ) : (
+            <a href="/add-book" className="upload-link">
+              ➕ Upload Book
+            </a>
+          )}
         </div>
       ) : (
         <div className="books-grid">
