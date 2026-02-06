@@ -4,10 +4,14 @@ import './BookCard.css';
 const BookCard = ({ book, onDelete, onRefresh }) => {
   const [isDeleting, setIsDeleting] = useState(false);
 
+  // ⭐ IMPORTANT: Files are in subdirectories!
+  // PDFs are in: uploads/books/
+  // Covers are in: uploads/covers/
+
   // Get cover image URL
   const getCoverUrl = () => {
     if (book.coverFilename) {
-      return `http://localhost:5000/uploads/${book.coverFilename}`;
+      return `http://localhost:5000/uploads/covers/${book.coverFilename}`;
     }
     return null;
   };
@@ -15,7 +19,7 @@ const BookCard = ({ book, onDelete, onRefresh }) => {
   // Get PDF URL
   const getPdfUrl = () => {
     if (book.pdfFilename) {
-      return `http://localhost:5000/uploads/${book.pdfFilename}`;
+      return `http://localhost:5000/uploads/books/${book.pdfFilename}`;
     }
     return null;
   };
@@ -51,10 +55,12 @@ const BookCard = ({ book, onDelete, onRefresh }) => {
   // Handle Read Book
   const handleReadBook = () => {
     const pdfUrl = getPdfUrl();
+    console.log('Opening PDF:', pdfUrl); // Debug log
+    
     if (pdfUrl) {
       window.open(pdfUrl, '_blank');
     } else {
-      alert('PDF file not available for this book');
+      alert('❌ PDF file not available for this book.\n\nThis book was uploaded without a PDF file.');
     }
   };
 
@@ -105,6 +111,7 @@ const BookCard = ({ book, onDelete, onRefresh }) => {
             alt={book.title}
             className="book-cover-img"
             onError={(e) => {
+              console.error('Failed to load cover:', coverUrl);
               e.target.style.display = 'none';
               e.target.nextElementSibling.style.display = 'flex';
             }}
@@ -148,6 +155,9 @@ const BookCard = ({ book, onDelete, onRefresh }) => {
           )}
           {book.pages && (
             <span className="meta-tag">📄 {book.pages} pages</span>
+          )}
+          {book.isbn && (
+            <span className="meta-tag">🔢 {book.isbn}</span>
           )}
         </div>
 

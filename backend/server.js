@@ -20,7 +20,8 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Serve static files for uploaded PDFs and covers
+// ⭐⭐⭐ CRITICAL: Serve static files for uploaded PDFs and covers
+// This serves the entire uploads folder including subdirectories
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Routes
@@ -49,7 +50,8 @@ app.get('/', (req, res) => {
       test: '/api/test',
       auth: '/api/auth',
       users: '/api/users',
-      books: '/api/books'
+      books: '/api/books',
+      uploads: '/uploads (PDFs in /uploads/books/, covers in /uploads/covers/)'
     }
   });
 });
@@ -67,6 +69,8 @@ app.listen(PORT, () => {
   console.log(`👥 Users API: http://localhost:${PORT}/api/users`);
   console.log(`📚 Books API: http://localhost:${PORT}/api/books`);
   console.log(`🧪 Test API: http://localhost:${PORT}/api/test`);
+  console.log(`📁 PDFs: http://localhost:${PORT}/uploads/books/`);
+  console.log(`🖼️  Covers: http://localhost:${PORT}/uploads/covers/`);
   console.log('════════════════════════════════════════');
   console.log('');
 });
