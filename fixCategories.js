@@ -1,11 +1,13 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
 
-// Import your existing DB connection config
+// Use MONGO_URI (not MONGODB_URI) - matches your .env file
 const connectDB = async () => {
   try {
-    // Connect without deprecated options
-    const conn = await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/viklib');
+    const conn = await mongoose.connect(process.env.MONGO_URI, {
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 45000,
+    });
     return conn;
   } catch (error) {
     console.error('Connection error:', error.message);
@@ -36,7 +38,7 @@ async function fixCategories() {
     console.log('   Self-Help → Psychology Migration Tool');
     console.log('='.repeat(80) + '\n');
 
-    console.log('🔄 Connecting to MongoDB...');
+    console.log('🔄 Connecting to MongoDB Atlas...');
     await connectDB();
     console.log('✅ Connected successfully!\n');
 
@@ -50,6 +52,8 @@ async function fixCategories() {
       await mongoose.connection.close();
       return;
     }
+
+    console.log(`📊 Total books in database: ${allBooks.length}\n`);
 
     // Show all categories
     const uniqueCategories = [...new Set(allBooks.map(b => b.category))];
@@ -117,9 +121,9 @@ async function fixCategories() {
     console.log('✨ SUCCESS! All Self-Help books moved to Psychology category.');
     console.log('─'.repeat(80));
     console.log('\n📝 Next Steps:');
-    console.log('   1. Restart your backend server:');
+    console.log('   1. Restart your backend server (if running):');
     console.log('      cd backend && npm start');
-    console.log('\n   2. Refresh your browser (F5 or Ctrl+R)');
+    console.log('\n   2. Refresh your browser (F5 or Ctrl+Shift+R)');
     console.log('\n   3. Click on "Psychology" category to see your books!');
     console.log('\n' + '='.repeat(80) + '\n');
 
@@ -129,9 +133,9 @@ async function fixCategories() {
   } catch (error) {
     console.error('\n❌ ERROR:', error.message);
     console.error('\n💡 Common issues:');
-    console.error('   1. MongoDB not running - start MongoDB service');
-    console.error('   2. Wrong database name in .env file');
-    console.error('   3. Network/connection issues\n');
+    console.error('   1. Internet connection problems');
+    console.error('   2. MongoDB Atlas credentials incorrect');
+    console.error('   3. IP address not whitelisted in MongoDB Atlas\n');
     
     if (mongoose.connection.readyState === 1) {
       await mongoose.connection.close();
