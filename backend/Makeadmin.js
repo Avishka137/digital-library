@@ -35,8 +35,8 @@ async function makeAdmin() {
       process.exit(0);
     }
     
-    // Make the first user admin (or specify email)
-    const emailToMakeAdmin = users[0].email; // Change this to specific email if needed
+    // ✨ CHANGED THIS LINE - Make avishka an admin
+    const emailToMakeAdmin = 'avishka@gmail.com';
     
     const result = await User.updateOne(
       { email: emailToMakeAdmin },
@@ -53,11 +53,17 @@ async function makeAdmin() {
     console.log('\n📋 Updated users:\n');
     const updatedUsers = await User.find().select('username email role');
     updatedUsers.forEach((user, index) => {
-      console.log(`${index + 1}. ${user.username || 'No name'} (${user.email}) - Role: ${user.role}`);
+      const roleIcon = user.role === 'admin' ? '👑' : '👤';
+      console.log(`${index + 1}. ${roleIcon} ${user.username || 'No name'} (${user.email}) - Role: ${user.role}`);
     });
     
+    console.log('\n🎯 Next Steps:');
+    console.log('   1. Logout from your app');
+    console.log('   2. Login as avishka@gmail.com');
+    console.log('   3. Go to Users page - it will work now! 🎉\n');
+    
     await mongoose.connection.close();
-    console.log('\n🔒 Done!');
+    console.log('🔒 Done!');
     
   } catch (error) {
     console.error('Error:', error);
