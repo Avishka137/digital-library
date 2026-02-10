@@ -4,6 +4,7 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const Book = require('../models/Book');
+const { authenticateToken, isAdmin } = require('../middleware/authMiddleware');
 
 // Create uploads directories if they don't exist
 const uploadsDir = path.join(__dirname, '../uploads');
@@ -45,12 +46,15 @@ const upload = multer({
   }
 });
 
-// Get all books (with optional category filter)
+// ==========================================
+// PUBLIC ROUTES (Anyone can access)
+// ==========================================
+
+// Get all books (with optional category filter) - PUBLIC
 router.get('/', async (req, res) => {
   try {
     const { category } = req.query;
     
-    // Build filter object
     let filter = {};
     if (category && category !== 'All') {
       filter.category = category;
@@ -73,7 +77,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Get book by ID
+// Get book by ID - PUBLIC
 router.get('/:id', async (req, res) => {
   try {
     const book = await Book.findById(req.params.id);
@@ -99,7 +103,7 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// Get books by category (alternative endpoint)
+// Get books by category - PUBLIC
 router.get('/category/:categoryName', async (req, res) => {
   try {
     const { categoryName } = req.params;
@@ -120,10 +124,19 @@ router.get('/category/:categoryName', async (req, res) => {
   }
 });
 
-// Create new book with file upload
-router.post('/', upload.fields([{ name: 'pdf', maxCount: 1 }, { name: 'cover', maxCount: 1 }]), async (req, res) => {
+// ==========================================
+// PROTECTED ROUTES (Admin only)
+// ==========================================
+
+// Create new book - ADMIN ONLY
+router.post('/', authenticateToken, isAdmin, upload.fields([
+  { name: 'pdf', maxCount: 1 }, 
+  { name: 'cover', maxCount: 1 }
+]), async (req, res) => {
   try {
     const { title, author, isbn, category, description, publishedYear, pages } = req.body;
+    
+    console.log('📚 Admin creating book:', { title, author, admin: req.user.username });
     
     if (!title || !author) {
       return res.status(400).json({
@@ -162,6 +175,7 @@ router.post('/', upload.fields([{ name: 'pdf', maxCount: 1 }, { name: 'cover', m
       data: newBook
     });
   } catch (error) {
+    console.error('Error creating book:', error);
     res.status(500).json({
       success: false,
       message: 'Error creating book',
@@ -170,10 +184,15 @@ router.post('/', upload.fields([{ name: 'pdf', maxCount: 1 }, { name: 'cover', m
   }
 });
 
-// Update book
-router.put('/:id', upload.fields([{ name: 'pdf', maxCount: 1 }, { name: 'cover', maxCount: 1 }]), async (req, res) => {
+// Update book - ADMIN ONLY
+router.put('/:id', authenticateToken, isAdmin, upload.fields([
+  { name: 'pdf', maxCount: 1 }, 
+  { name: 'cover', maxCount: 1 }
+]), async (req, res) => {
   try {
     const { title, author, isbn, category, description, publishedYear, pages } = req.body;
+    
+    console.log('📝 Admin updating book:', req.params.id);
     
     let updateData = {
       title,
@@ -212,6 +231,7 @@ router.put('/:id', upload.fields([{ name: 'pdf', maxCount: 1 }, { name: 'cover',
       data: book
     });
   } catch (error) {
+    console.error('Error updating book:', error);
     res.status(500).json({
       success: false,
       message: 'Error updating book',
@@ -220,9 +240,11 @@ router.put('/:id', upload.fields([{ name: 'pdf', maxCount: 1 }, { name: 'cover',
   }
 });
 
-// Delete book
-router.delete('/:id', async (req, res) => {
+// Delete book - ADMIN ONLY
+router.delete('/:id', authenticateToken, isAdmin, async (req, res) => {
   try {
+    console.log('🗑️ Admin deleting book:', req.params.id);
+    
     const book = await Book.findByIdAndDelete(req.params.id);
     
     if (!book) {
@@ -248,6 +270,7 @@ router.delete('/:id', async (req, res) => {
       data: book
     });
   } catch (error) {
+    console.error('Error deleting book:', error);
     res.status(500).json({
       success: false,
       message: 'Error deleting book',
@@ -256,10 +279,12 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-// Delete multiple books
-router.post('/delete/multiple', async (req, res) => {
+// Delete multiple books - ADMIN ONLY
+router.post('/delete/multiple', authenticateToken, isAdmin, async (req, res) => {
   try {
     const { ids } = req.body;
+    
+    console.log('🗑️ Admin deleting multiple books:', ids.length);
     
     if (!ids || !Array.isArray(ids)) {
       return res.status(400).json({
@@ -290,6 +315,7 @@ router.post('/delete/multiple', async (req, res) => {
       deleted: result.deletedCount
     });
   } catch (error) {
+    console.error('Error deleting books:', error);
     res.status(500).json({
       success: false,
       message: 'Error deleting books',
