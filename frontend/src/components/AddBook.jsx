@@ -67,8 +67,20 @@ const AddBook = () => {
     }
 
     try {
+      // Get token from localStorage
+      const token = localStorage.getItem('token');
+
+      if (!token) {
+        alert('❌ Not authenticated! Please log in again.');
+        setUploading(false);
+        return;
+      }
+
       const response = await fetch('http://localhost:5000/api/books', {
         method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
         body: formDataToSend,
       });
 

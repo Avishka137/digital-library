@@ -15,7 +15,8 @@ const Categories = () => {
   });
 
   const categories = [
-    { name: 'Religious', icon: '🕌', color: '#9b59b6', books: bookCounts.Religious },
+    // ✅ FIXED: Universal prayer hands - represents all faiths
+    { name: 'Religious', icon: '🙏', color: '#9b59b6', books: bookCounts.Religious },
     { name: 'Psychology', icon: '🧠', color: '#16a085', books: bookCounts.Psychology },
     { name: 'Novels', icon: '📖', color: '#27ae60', books: bookCounts.Novels },
     { name: 'Science', icon: '🔬', color: '#e74c3c', books: bookCounts.Science },

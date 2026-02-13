@@ -73,8 +73,20 @@ const BookCard = ({ book, onDelete, onRefresh }) => {
     setIsDeleting(true);
 
     try {
+      // Get token from localStorage
+      const token = localStorage.getItem('token');
+
+      if (!token) {
+        alert('❌ Not authenticated! Please log in again.');
+        setIsDeleting(false);
+        return;
+      }
+
       const response = await fetch(`http://localhost:5000/api/books/${book._id}`, {
         method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
       });
 
       const data = await response.json();
