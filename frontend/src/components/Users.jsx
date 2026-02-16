@@ -70,15 +70,33 @@ const Users = () => {
       }
       
       const data = await response.json();
+      console.log('API Response:', data); // Debug log
       
-      // Add UI properties to users
-      const usersWithUI = (data.users || []).map(user => ({
+      // ⭐ FIX: Handle different response structures
+      let usersData = [];
+      if (Array.isArray(data)) {
+        usersData = data;
+      } else if (data.users && Array.isArray(data.users)) {
+        usersData = data.users;
+      } else if (data.data && Array.isArray(data.data)) {
+        usersData = data.data;
+      } else {
+        console.error('Unexpected API response structure:', data);
+        usersData = [];
+      }
+
+      console.log('Users data:', usersData); // Debug log
+      
+      // ⭐ FIX: Add UI properties and use _id from MongoDB
+      const usersWithUI = usersData.map(user => ({
         ...user,
+        id: user._id || user.id, // ⭐ Use _id from MongoDB
         avatar: user.avatar || generateAvatar(user.name),
         color: user.color || getRandomColor(),
         borrowedBooks: user.borrowedBooks || 0
       }));
       
+      console.log('Processed users:', usersWithUI); // Debug log
       setUsers(usersWithUI);
     } catch (error) {
       console.error('Error fetching users:', error);
@@ -110,7 +128,7 @@ const Users = () => {
 
   const handleAddUser = async () => {
     if (!newUser.name.trim() || !newUser.email.trim() || !newUser.password) {
-      alert('Please fill in all required fields');
+      alert('Please fill in all required fields (Name, Email, Password)');
       return;
     }
 
@@ -127,6 +145,8 @@ const Users = () => {
         color: newUser.color
       };
 
+      console.log('Creating user:', userData); // Debug log
+
       const response = await fetch('http://localhost:5000/api/users', {
         method: 'POST',
         headers: {
@@ -137,6 +157,7 @@ const Users = () => {
       });
 
       const data = await response.json();
+      console.log('Create user response:', data); // Debug log
 
       if (!response.ok) {
         throw new Error(data.message || 'Failed to create user');
@@ -144,14 +165,15 @@ const Users = () => {
 
       await fetchUsers();
       resetForm();
-      alert('User created successfully!');
+      alert('✅ User created successfully!');
     } catch (error) {
       console.error('Error creating user:', error);
-      alert(error.message || 'Failed to create user. Please try again.');
+      alert('❌ ' + (error.message || 'Failed to create user. Please try again.'));
     }
   };
 
   const handleEditUser = (user) => {
+    console.log('Editing user:', user); // Debug log
     setEditingUser(user);
     setNewUser({ 
       name: user.name, 
@@ -188,6 +210,8 @@ const Users = () => {
         userData.password = newUser.password;
       }
 
+      console.log('Updating user:', editingUser.id, userData); // Debug log
+
       const response = await fetch(`http://localhost:5000/api/users/${editingUser.id}`, {
         method: 'PUT',
         headers: {
@@ -198,6 +222,7 @@ const Users = () => {
       });
 
       const data = await response.json();
+      console.log('Update user response:', data); // Debug log
 
       if (!response.ok) {
         throw new Error(data.message || 'Failed to update user');
@@ -205,10 +230,10 @@ const Users = () => {
 
       await fetchUsers();
       resetForm();
-      alert('User updated successfully!');
+      alert('✅ User updated successfully!');
     } catch (error) {
       console.error('Error updating user:', error);
-      alert(error.message || 'Failed to update user. Please try again.');
+      alert('❌ ' + (error.message || 'Failed to update user. Please try again.'));
     }
   };
 
@@ -220,6 +245,8 @@ const Users = () => {
     try {
       const token = localStorage.getItem('token');
       
+      console.log('Deleting user:', id); // Debug log
+
       const response = await fetch(`http://localhost:5000/api/users/${id}`, {
         method: 'DELETE',
         headers: {
@@ -228,16 +255,17 @@ const Users = () => {
       });
 
       const data = await response.json();
+      console.log('Delete user response:', data); // Debug log
 
       if (!response.ok) {
         throw new Error(data.message || 'Failed to delete user');
       }
 
       await fetchUsers();
-      alert('User deleted successfully!');
+      alert('✅ User deleted successfully!');
     } catch (error) {
       console.error('Error deleting user:', error);
-      alert(error.message || 'Failed to delete user. Please try again.');
+      alert('❌ ' + (error.message || 'Failed to delete user. Please try again.'));
     }
   };
 
@@ -409,7 +437,11 @@ const Users = () => {
               <UsersIcon className="icon" />
             </div>
             <h3 className="empty-title">No users found</h3>
-            <p className="empty-text">Try adjusting your search or create a new user</p>
+            <p className="empty-text">
+              {searchTerm 
+                ? 'Try adjusting your search or create a new user' 
+                : 'Get started by creating your first user'}
+            </p>
           </div>
         )}
 
