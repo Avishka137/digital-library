@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Book, Upload, Tag, TrendingUp, Users, BookOpen } from 'lucide-react';
+import { Book, Upload, Tag, TrendingUp, Users, BookOpen, ArrowRight, Sparkles, Library } from 'lucide-react';
 import './Dashboard.css';
 
 const Dashboard = () => {
@@ -45,32 +45,32 @@ const Dashboard = () => {
       title: 'Total Books',
       value: stats.totalBooks,
       icon: Book,
-      color: '#2ecc71',
-      bgColor: '#d5f4e6',
+      color: '#6366f1',
+      bgColor: '#e0e7ff',
       link: '/books'
     },
     {
       title: 'Categories',
       value: stats.categories,
       icon: Tag,
-      color: '#3498db',
-      bgColor: '#d6eaf8',
+      color: '#ec4899',
+      bgColor: '#fce7f3',
       link: '/categories'
     },
     {
       title: 'Recently Added',
       value: stats.recentlyAdded,
       icon: TrendingUp,
-      color: '#f39c12',
-      bgColor: '#fdebd0',
+      color: '#f59e0b',
+      bgColor: '#fef3c7',
       link: '/books'
     },
     {
       title: 'Borrowed Books',
       value: stats.borrowedBooks,
       icon: BookOpen,
-      color: '#9b59b6',
-      bgColor: '#ebdef0',
+      color: '#10b981',
+      bgColor: '#d1fae5',
       link: '/borrowed'
     }
   ];
@@ -79,8 +79,10 @@ const Dashboard = () => {
     return (
       <div className="dashboard-container">
         <div className="loading-dashboard">
-          <div className="spinner"></div>
-          <p>Loading dashboard...</p>
+          <div className="loader">
+            <div className="loader-circle"></div>
+          </div>
+          <p>Loading your library...</p>
         </div>
       </div>
     );
@@ -88,136 +90,186 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard-container">
-      {/* Welcome Section */}
-      <div className="welcome-section">
-        <div className="welcome-content">
-          <div className="welcome-icon">
-            <Book size={48} />
+      {/* Hero Section with Book Library Theme */}
+      <div className="hero-section">
+        <div className="hero-background">
+          <div className="hero-blob hero-blob-1"></div>
+          <div className="hero-blob hero-blob-2"></div>
+          <svg className="hero-books" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+            <rect x="50" y="80" width="35" height="120" fill="rgba(255,255,255,0.1)" rx="4"/>
+            <rect x="95" y="70" width="35" height="130" fill="rgba(255,255,255,0.15)" rx="4"/>
+            <rect x="140" y="90" width="35" height="110" fill="rgba(255,255,255,0.1)" rx="4"/>
+            <rect x="185" y="60" width="35" height="140" fill="rgba(255,255,255,0.12)" rx="4"/>
+            <rect x="230" y="85" width="35" height="115" fill="rgba(255,255,255,0.1)" rx="4"/>
+            <rect x="275" y="75" width="35" height="125" fill="rgba(255,255,255,0.14)" rx="4"/>
+          </svg>
+        </div>
+        
+        <div className="hero-content">
+          <div className="hero-text">
+            <div className="hero-badge">
+              <Library size={16} />
+              <span>Welcome Back</span>
+            </div>
+            <h1 className="hero-title">
+              Your Digital <span className="gradient-text">Library</span>
+            </h1>
+            <p className="hero-subtitle">
+              Discover, manage, and organize your book collection with ease
+            </p>
           </div>
-          <div className="welcome-text">
-            <h1>Welcome to VIKLIB</h1>
-            <p>Your Digital Library Management System</p>
+          
+          <div className="hero-actions">
+            <button 
+              className="btn btn-primary"
+              onClick={() => navigate('/add-book')}
+            >
+              <Upload size={20} />
+              Add New Book
+            </button>
+            <button 
+              className="btn btn-secondary"
+              onClick={() => navigate('/books')}
+            >
+              Browse Collection
+              <ArrowRight size={18} />
+            </button>
           </div>
         </div>
       </div>
 
-      {/* Stats Cards */}
-      <div className="stats-grid">
-        {statCards.map((stat, index) => {
-          const Icon = stat.icon;
-          return (
-            <div 
-              key={index} 
-              className="stat-card"
-              onClick={() => navigate(stat.link)}
-              style={{ 
-                borderLeft: `4px solid ${stat.color}`
-              }}
-            >
-              <div className="stat-icon" style={{ backgroundColor: stat.bgColor }}>
-                <Icon size={32} color={stat.color} />
+      {/* Stats Grid */}
+      <div className="stats-section">
+        <h2 className="section-subtitle">Your Library At A Glance</h2>
+        <div className="stats-grid">
+          {statCards.map((stat, index) => {
+            const Icon = stat.icon;
+            return (
+              <div 
+                key={index} 
+                className="stat-card"
+                onClick={() => navigate(stat.link)}
+                style={{ 
+                  '--stat-color': stat.color,
+                  '--stat-bg': stat.bgColor
+                }}
+              >
+                <div className="stat-header">
+                  <div className="stat-icon">
+                    <Icon size={28} />
+                  </div>
+                  <span className="stat-label">{stat.title}</span>
+                </div>
+                <div className="stat-value">{stat.value}</div>
               </div>
-              <div className="stat-info">
-                <p className="stat-label">{stat.title}</p>
-                <h2 className="stat-value" style={{ color: stat.color }}>
-                  {stat.value}
-                </h2>
-              </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
 
       {/* Quick Actions */}
-      <div className="quick-actions-section">
-        <h2 className="section-title">📋 Quick Actions</h2>
-        <div className="quick-actions-grid">
+      <div className="actions-section">
+        <div className="section-header">
+          <h2 className="section-title">Quick Actions</h2>
+          <p className="section-description">Get started with these common tasks</p>
+        </div>
+        
+        <div className="actions-grid">
           <button 
             className="action-card"
             onClick={() => navigate('/add-book')}
           >
-            <div className="action-icon" style={{ background: 'linear-gradient(135deg, #2ecc71 0%, #27ae60 100%)' }}>
-              <Upload size={28} />
+            <div className="action-icon" style={{ '--icon-bg': '#6366f1' }}>
+              <Upload size={32} />
             </div>
-            <div className="action-content">
+            <div className="action-text">
               <h3>Upload Book</h3>
-              <p>Add a new book to your library</p>
+              <p>Add a new title to your collection</p>
             </div>
+            <ArrowRight size={20} className="action-arrow" />
           </button>
 
           <button 
             className="action-card"
             onClick={() => navigate('/books')}
           >
-            <div className="action-icon" style={{ background: 'linear-gradient(135deg, #3498db 0%, #2980b9 100%)' }}>
-              <Book size={28} />
+            <div className="action-icon" style={{ '--icon-bg': '#ec4899' }}>
+              <Book size={32} />
             </div>
-            <div className="action-content">
+            <div className="action-text">
               <h3>View All Books</h3>
-              <p>Browse your book collection</p>
+              <p>Browse your entire collection</p>
             </div>
+            <ArrowRight size={20} className="action-arrow" />
           </button>
 
           <button 
             className="action-card"
             onClick={() => navigate('/categories')}
           >
-            <div className="action-icon" style={{ background: 'linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%)' }}>
-              <Tag size={28} />
+            <div className="action-icon" style={{ '--icon-bg': '#f59e0b' }}>
+              <Tag size={32} />
             </div>
-            <div className="action-content">
+            <div className="action-text">
               <h3>Manage Categories</h3>
-              <p>Organize your library</p>
+              <p>Organize your library by genre</p>
             </div>
+            <ArrowRight size={20} className="action-arrow" />
           </button>
 
           <button 
             className="action-card"
             onClick={() => navigate('/users')}
           >
-            <div className="action-icon" style={{ background: 'linear-gradient(135deg, #f39c12 0%, #e67e22 100%)' }}>
-              <Users size={28} />
+            <div className="action-icon" style={{ '--icon-bg': '#10b981' }}>
+              <Users size={32} />
             </div>
-            <div className="action-content">
+            <div className="action-text">
               <h3>Manage Users</h3>
-              <p>View and manage library users</p>
+              <p>View and manage library members</p>
             </div>
+            <ArrowRight size={20} className="action-arrow" />
           </button>
         </div>
       </div>
 
       {/* Recently Added Books */}
-      <div className="recent-books-section">
+      <div className="books-section">
         <div className="section-header">
-          <h2 className="section-title">📚 Recently Added Books</h2>
+          <h2 className="section-title">Recently Added</h2>
           <button 
-            className="view-all-link"
+            className="view-all-btn"
             onClick={() => navigate('/books')}
           >
-            View All →
+            View All <ArrowRight size={16} />
           </button>
         </div>
         
         {recentBooks.length === 0 ? (
-          <div className="empty-recent">
-            <Book size={48} color="#ccc" />
-            <p>No books in your library yet</p>
+          <div className="empty-state">
+            <div className="empty-icon">
+              <Book size={56} />
+            </div>
+            <h3>No Books Yet</h3>
+            <p>Start building your library by uploading your first book</p>
             <button 
-              className="upload-first-btn"
+              className="btn btn-primary"
               onClick={() => navigate('/add-book')}
             >
-              Upload Your First Book
+              <Upload size={18} />
+              Upload First Book
             </button>
           </div>
         ) : (
-          <div className="recent-books-grid">
-            {recentBooks.map((book) => (
+          <div className="books-grid">
+            {recentBooks.map((book, index) => (
               <div 
                 key={book._id} 
-                className="recent-book-card"
+                className="book-card"
                 onClick={() => navigate('/books')}
+                style={{ '--card-delay': `${index * 0.1}s` }}
               >
-                <div className="recent-book-cover">
+                <div className="book-cover">
                   {book.coverFilename ? (
                     <img 
                       src={`http://localhost:5000/uploads/covers/${book.coverFilename}`}
@@ -228,15 +280,15 @@ const Dashboard = () => {
                       }}
                     />
                   ) : null}
-                  <div className="recent-book-placeholder" style={{ display: book.coverFilename ? 'none' : 'flex' }}>
-                    📚
+                  <div className="book-placeholder" style={{ display: book.coverFilename ? 'none' : 'flex' }}>
+                    <BookOpen size={48} />
                   </div>
                 </div>
-                <div className="recent-book-info">
-                  <h4>{book.title}</h4>
-                  <p>{book.author}</p>
+                <div className="book-info">
+                  <h4 className="book-title">{book.title}</h4>
+                  <p className="book-author">{book.author}</p>
                   {book.category && (
-                    <span className="recent-book-category">{book.category}</span>
+                    <span className="book-category">{book.category}</span>
                   )}
                 </div>
               </div>
