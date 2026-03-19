@@ -1,200 +1,330 @@
+/* =============================================================
+   AddBookModal.css — VIKLIB
+   Covers every class used in AddBookModal.jsx
+   ============================================================= */
+
+:root {
+  --purple:       #7c3aed;
+  --purple-dark:  #5b21b6;
+  --purple-hover: #6d28d9;
+  --purple-light: #ddd6fe;
+  --purple-soft:  #f5f3ff;
+  --purple-mid:   #ede9fe;
+
+  --text-dark:    #111827;
+  --text-mid:     #374151;
+  --text-muted:   #9ca3af;
+
+  --border:       #e5e7eb;
+  --card-bg:      #ffffff;
+
+  --red:          #dc2626;
+  --red-bg:       #fee2e2;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   OVERLAY  — full-screen dimmed backdrop
+───────────────────────────────────────────────────────────── */
 .modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.6);
+  inset: 0;
+  background: rgba(17, 24, 39, 0.50);
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   z-index: 1000;
   padding: 20px;
-  overflow-y: auto;
+  backdrop-filter: blur(3px);
+  animation: overlayIn 0.18s ease;
 }
 
+@keyframes overlayIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   MODAL CARD
+───────────────────────────────────────────────────────────── */
 .modal-content {
-  background: white;
-  border-radius: 15px;
+  background: var(--card-bg);
+  border-radius: 20px;
   width: 100%;
-  max-width: 600px;
+  max-width: 620px;
   max-height: 90vh;
   overflow-y: auto;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-  animation: slideIn 0.3s ease-out;
-  border-top: 4px solid #10b981;
+  box-shadow: 0 24px 64px rgba(109, 40, 217, 0.20);
+  animation: slideUp 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-@keyframes slideIn {
-  from {
-    transform: translateY(-50px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
+@keyframes slideUp {
+  from { transform: translateY(30px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
 }
 
+/* Scrollbar inside modal */
+.modal-content::-webkit-scrollbar       { width: 6px; }
+.modal-content::-webkit-scrollbar-track { background: #f3f4f6; border-radius: 10px; }
+.modal-content::-webkit-scrollbar-thumb { background: var(--purple-light); border-radius: 10px; }
+.modal-content::-webkit-scrollbar-thumb:hover { background: var(--purple); }
+
+/* ─────────────────────────────────────────────────────────────
+   MODAL HEADER
+───────────────────────────────────────────────────────────── */
 .modal-header {
-  padding: 25px 30px;
-  border-bottom: 2px solid #d1fae5;
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
+  padding: 24px 28px 0;
   position: sticky;
   top: 0;
-  background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+  background: var(--card-bg);
   z-index: 10;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--border);
 }
 
 .modal-header h2 {
-  margin: 0;
-  color: #047857;
-  font-size: 24px;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text-dark);
 }
 
+/* ×  close button */
 .close-btn {
-  background: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background: #f3f4f6;
   border: none;
-  font-size: 32px;
-  color: #a7f3d0;
+  color: var(--text-mid);
+  font-size: 20px;
+  line-height: 1;
   cursor: pointer;
-  padding: 0;
-  width: 32px;
-  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: color 0.2s;
+  transition: background 0.15s, color 0.15s;
+  flex-shrink: 0;
 }
 
 .close-btn:hover {
-  color: #059669;
+  background: var(--red-bg);
+  color: var(--red);
 }
 
+/* ─────────────────────────────────────────────────────────────
+   ERROR MESSAGE
+───────────────────────────────────────────────────────────── */
 .error-message {
-  margin: 20px 30px 0;
-  padding: 12px;
-  background: #fee2e2;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--red-bg);
   border: 1px solid #fca5a5;
-  border-radius: 8px;
-  color: #dc2626;
-  font-size: 14px;
+  color: var(--red);
+  font-size: 13.5px;
+  font-weight: 500;
+  padding: 11px 16px;
+  border-radius: 10px;
+  margin: 16px 28px 0;
 }
 
+/* ─────────────────────────────────────────────────────────────
+   FORM
+───────────────────────────────────────────────────────────── */
 .book-form {
-  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 22px 28px 28px;
 }
 
+/* ── Two-column row ─────────────────────────────────────── */
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 15px;
-  margin-bottom: 20px;
+  gap: 16px;
 }
 
+/* ── Single form group ──────────────────────────────────── */
 .form-group {
-  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
 }
 
 .form-group label {
-  display: block;
-  margin-bottom: 8px;
+  font-size: 13px;
   font-weight: 600;
-  color: #047857;
-  font-size: 14px;
+  color: var(--text-mid);
 }
 
+/* ── Inputs & textarea ──────────────────────────────────── */
 .form-group input,
-.form-group textarea,
-.form-group select {
-  width: 100%;
-  padding: 12px 15px;
-  border: 2px solid #d1fae5;
-  border-radius: 8px;
-  font-size: 14px;
+.form-group textarea {
   font-family: inherit;
-  transition: all 0.3s;
-  background-color: #f0fdf4;
-}
-
-.form-group input:focus,
-.form-group textarea:focus,
-.form-group select:focus {
+  font-size: 14px;
+  color: var(--text-dark);
+  background: #f9fafb;
+  border: 1.5px solid var(--border);
+  border-radius: 11px;
+  padding: 10px 14px;
+  width: 100%;
   outline: none;
-  border-color: #10b981;
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
-  background-color: white;
+  transition: border-color 0.18s, box-shadow 0.18s, background 0.18s;
 }
 
 .form-group textarea {
   resize: vertical;
   min-height: 100px;
+  line-height: 1.65;
 }
 
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  color: var(--text-muted);
+  font-size: 13.5px;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  border-color: var(--purple);
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.10);
+  background: #ffffff;
+}
+
+/* Remove number arrows */
+input[type="number"] { -moz-appearance: textfield; }
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
+
+/* URL input — subtle chain-link tint */
+input[type="url"] {
+  font-size: 13.5px;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   FORM ACTIONS  (Cancel + Submit row)
+───────────────────────────────────────────────────────────── */
 .form-actions {
   display: flex;
-  gap: 15px;
   justify-content: flex-end;
-  padding-top: 20px;
-  border-top: 2px solid #d1fae5;
-  margin-top: 10px;
+  gap: 12px;
+  padding-top: 6px;
+  border-top: 1px solid var(--border);
+  margin-top: 4px;
 }
 
-.btn-primary,
+/* Cancel */
 .btn-secondary {
-  padding: 12px 24px;
-  border: none;
-  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 10px 22px;
+  border-radius: 10px;
+  background: #f3f4f6;
+  color: var(--text-mid);
+  border: 1.5px solid var(--border);
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s;
-}
-
-.btn-primary {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  color: white;
-}
-
-.btn-primary:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
-}
-
-.btn-primary:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.btn-secondary {
-  background: #6b7280;
-  color: white;
+  transition: background 0.16s, color 0.16s;
 }
 
 .btn-secondary:hover:not(:disabled) {
-  background: #4b5563;
+  background: #e5e7eb;
+  color: var(--text-dark);
 }
 
-/* Responsive */
-@media (max-width: 768px) {
+.btn-secondary:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Add / Update */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 10px 26px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--purple), var(--purple-dark));
+  color: #ffffff;
+  border: none;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 3px 12px rgba(124, 58, 237, 0.28);
+  transition: all 0.18s;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--purple-hover), var(--purple-dark));
+  transform: translateY(-2px);
+  box-shadow: 0 5px 18px rgba(124, 58, 237, 0.38);
+}
+
+.btn-primary:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn-primary:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   GLOBAL SCROLLBAR & SELECTION
+───────────────────────────────────────────────────────────── */
+::-webkit-scrollbar       { width: 7px; }
+::-webkit-scrollbar-track { background: #f3f4f6; border-radius: 10px; }
+::-webkit-scrollbar-thumb { background: var(--purple-light); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: var(--purple); }
+
+::selection      { background: var(--purple); color: #fff; }
+::-moz-selection { background: var(--purple); color: #fff; }
+
+/* ─────────────────────────────────────────────────────────────
+   RESPONSIVE
+───────────────────────────────────────────────────────────── */
+@media (max-width: 640px) {
   .modal-content {
-    max-width: 100%;
-    margin: 0;
-    border-radius: 0;
-    max-height: 100vh;
+    border-radius: 16px;
+    max-height: 95vh;
+  }
+
+  .modal-header {
+    padding: 18px 18px 14px;
+  }
+
+  .book-form {
+    padding: 18px 18px 22px;
+    gap: 14px;
   }
 
   .form-row {
     grid-template-columns: 1fr;
   }
 
-  .book-form {
-    padding: 20px;
+  .form-actions {
+    flex-direction: column-reverse;
   }
 
-  .modal-header {
-    padding: 20px;
+  .btn-secondary,
+  .btn-primary {
+    width: 100%;
+    justify-content: center;
   }
+
+  .error-message {
+    margin: 12px 18px 0;
+  }
+}
+
+@media (max-width: 400px) {
+  .modal-overlay { padding: 10px; }
+  .modal-content { border-radius: 12px; }
 }
