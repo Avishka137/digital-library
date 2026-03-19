@@ -1,151 +1,245 @@
+/* =============================================================
+   Register.css — VIKLIB
+   Split layout: left = purple gradient branding, right = white form
+   Mirrors Login.css — consistent across auth pages
+   ============================================================= */
+
+:root {
+  --purple:       #7c3aed;
+  --purple-dark:  #5b21b6;
+  --purple-hover: #6d28d9;
+  --purple-light: #ddd6fe;
+  --purple-soft:  #f5f3ff;
+  --purple-mid:   #ede9fe;
+
+  --hero-start:   #1e1b4b;
+  --hero-mid:     #6d28d9;
+  --hero-end:     #c026d3;
+
+  --text-dark:    #111827;
+  --text-mid:     #374151;
+  --text-muted:   #9ca3af;
+
+  --border:       #e5e7eb;
+  --card-bg:      #ffffff;
+
+  --red:          #dc2626;
+  --red-bg:       #fee2e2;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  color: var(--text-dark);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   OUTER CONTAINER
+───────────────────────────────────────────────────────────── */
 .register-container {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 20px;
+  background: var(--purple-soft);
+  padding: 24px;
 }
 
+/* ─────────────────────────────────────────────────────────────
+   WRAPPER  — two-column card
+───────────────────────────────────────────────────────────── */
 .register-wrapper {
   display: flex;
-  max-width: 1100px;
   width: 100%;
-  background: white;
-  border-radius: 20px;
+  max-width: 960px;
+  min-height: 640px;
+  border-radius: 22px;
   overflow: hidden;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 20px 60px rgba(109, 40, 217, 0.22);
 }
 
+/* ─────────────────────────────────────────────────────────────
+   LEFT PANEL  — gradient branding
+───────────────────────────────────────────────────────────── */
 .register-left {
   flex: 1;
-  background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
-  padding: 60px 40px;
-  color: white;
+  background: linear-gradient(
+    145deg,
+    var(--hero-start)  0%,
+    var(--hero-mid)   52%,
+    var(--hero-end)  100%
+  );
+  padding: 52px 44px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  position: relative;
+  overflow: hidden;
 }
 
+/* decorative radial blobs */
+.register-left::before {
+  content: '';
+  position: absolute;
+  top: -80px;
+  right: -80px;
+  width: 320px;
+  height: 320px;
+  background: radial-gradient(circle, rgba(255,255,255,0.09) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.register-left::after {
+  content: '';
+  position: absolute;
+  bottom: -100px;
+  left: -60px;
+  width: 280px;
+  height: 280px;
+  background: radial-gradient(circle, rgba(255,255,255,0.07) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* Branding block */
 .register-branding {
-  text-align: center;
-  margin-bottom: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .library-icon {
-  font-size: 80px;
-  margin-bottom: 20px;
-  animation: float 3s ease-in-out infinite;
-}
-
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-20px);
-  }
+  font-size: 44px;
+  line-height: 1;
+  margin-bottom: 4px;
 }
 
 .register-branding h1 {
-  font-size: 48px;
-  margin: 0 0 10px 0;
-  font-weight: 800;
-  letter-spacing: 2px;
+  font-size: 40px;
+  font-weight: 900;
+  color: #ffffff;
+  letter-spacing: 8px;
+  line-height: 1;
 }
 
 .register-branding p {
-  font-size: 18px;
-  opacity: 0.9;
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.72);
+  font-weight: 400;
   margin: 0;
 }
 
+/* Feature list */
 .register-features {
   display: flex;
   flex-direction: column;
-  gap: 30px;
+  gap: 18px;
 }
 
 .feature {
   display: flex;
-  gap: 20px;
   align-items: flex-start;
+  gap: 14px;
+  background: rgba(255, 255, 255, 0.10);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 14px;
+  padding: 14px 18px;
+  backdrop-filter: blur(6px);
 }
 
 .feature-icon {
-  font-size: 36px;
+  font-size: 24px;
+  line-height: 1;
   flex-shrink: 0;
+  margin-top: 2px;
 }
 
 .feature h3 {
-  margin: 0 0 5px 0;
-  font-size: 18px;
-  font-weight: 600;
+  font-size: 14px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 3px;
 }
 
 .feature p {
+  font-size: 12.5px;
+  color: rgba(255, 255, 255, 0.68);
   margin: 0;
-  opacity: 0.9;
-  font-size: 14px;
 }
 
+/* ─────────────────────────────────────────────────────────────
+   RIGHT PANEL  — white form
+───────────────────────────────────────────────────────────── */
 .register-right {
-  flex: 1;
-  padding: 60px 50px;
+  flex: 1.1;
+  background: var(--card-bg);
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 44px 48px;
   overflow-y: auto;
-  max-height: 100vh;
 }
 
 .register-form-container {
   width: 100%;
-  max-width: 400px;
+  max-width: 380px;
 }
 
 .register-form-container h2 {
-  font-size: 32px;
-  color: #2c3e50;
-  margin: 0 0 10px 0;
-  font-weight: 700;
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--text-dark);
+  margin-bottom: 6px;
 }
 
 .register-subtitle {
-  color: #7f8c8d;
-  margin: 0 0 30px 0;
-  font-size: 16px;
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-bottom: 26px;
 }
 
+/* ── Error message ──────────────────────────────────────── */
 .error-message {
-  background: #fee;
-  border: 1px solid #fcc;
-  color: #c33;
-  padding: 12px 16px;
-  border-radius: 8px;
-  margin-bottom: 20px;
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 14px;
+  gap: 8px;
+  background: var(--red-bg);
+  border: 1px solid #fca5a5;
+  color: var(--red);
+  font-size: 13.5px;
+  font-weight: 500;
+  padding: 11px 14px;
+  border-radius: 10px;
+  margin-bottom: 20px;
 }
 
 .error-icon {
-  font-size: 18px;
+  font-size: 15px;
+  flex-shrink: 0;
 }
 
-.register-form .form-group {
-  margin-bottom: 18px;
+/* ── Form ───────────────────────────────────────────────── */
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
-.register-form label {
-  display: block;
-  color: #2c3e50;
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  font-size: 13px;
   font-weight: 600;
-  margin-bottom: 8px;
-  font-size: 14px;
+  color: var(--text-mid);
 }
 
+/* Input with icon */
 .input-wrapper {
   position: relative;
   display: flex;
@@ -154,138 +248,201 @@
 
 .input-icon {
   position: absolute;
-  left: 15px;
-  font-size: 18px;
+  left: 13px;
+  font-size: 16px;
+  line-height: 1;
   pointer-events: none;
+  z-index: 1;
 }
 
 .input-wrapper input {
   width: 100%;
-  padding: 12px 12px 12px 45px;
-  border: 2px solid #e0e0e0;
-  border-radius: 10px;
-  font-size: 15px;
-  transition: all 0.3s ease;
-  background: #f9f9f9;
+  padding: 11px 14px 11px 42px;
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--text-dark);
+  background: #f9fafb;
+  border: 1.5px solid var(--border);
+  border-radius: 11px;
+  outline: none;
+  transition: border-color 0.18s, box-shadow 0.18s, background 0.18s;
+}
+
+.input-wrapper input::placeholder {
+  color: var(--text-muted);
+  font-size: 13.5px;
 }
 
 .input-wrapper input:focus {
-  outline: none;
-  border-color: #2e7d32;
-  background: white;
-  box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+  border-color: var(--purple);
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.10);
+  background: #ffffff;
 }
 
+/* Password strength hint (optional, shown below password field) */
+.password-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: -4px;
+}
+
+/* ── Terms checkbox ─────────────────────────────────────── */
 .terms-checkbox {
-  margin: 20px 0;
+  margin-top: -2px;
 }
 
 .terms-checkbox label {
   display: flex;
   align-items: flex-start;
-  gap: 10px;
+  gap: 9px;
   cursor: pointer;
-  font-size: 14px;
-  color: #555;
-  font-weight: normal;
 }
 
 .terms-checkbox input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
-  cursor: pointer;
-  accent-color: #2e7d32;
+  width: 16px;
+  height: 16px;
   margin-top: 2px;
+  accent-color: var(--purple);
+  cursor: pointer;
   flex-shrink: 0;
+  border-radius: 4px;
+  padding: 0;
+  border: none;
+  box-shadow: none;
 }
 
-.register-button {
-  width: 100%;
-  padding: 16px;
-  background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
-  color: white;
-  border: none;
-  border-radius: 10px;
-  font-size: 16px;
+.terms-checkbox span {
+  font-size: 13px;
+  color: var(--text-mid);
+  line-height: 1.5;
+}
+
+.terms-checkbox a {
+  color: var(--purple);
   font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.terms-checkbox a:hover {
+  text-decoration: underline;
+}
+
+/* ── Submit button ──────────────────────────────────────── */
+.register-button {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  margin-top: 10px;
+  gap: 9px;
+  width: 100%;
+  padding: 13px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--purple), var(--purple-dark));
+  color: #ffffff;
+  border: none;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(124, 58, 237, 0.32);
+  transition: all 0.2s;
+  letter-spacing: 0.2px;
+  margin-top: 4px;
 }
 
-.register-button:hover {
+.register-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--purple-hover), var(--purple-dark));
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(46, 125, 50, 0.3);
+  box-shadow: 0 6px 20px rgba(124, 58, 237, 0.40);
 }
 
-.register-button:active {
+.register-button:active:not(:disabled) {
   transform: translateY(0);
 }
 
 .register-button:disabled {
-  opacity: 0.7;
+  opacity: 0.68;
   cursor: not-allowed;
 }
 
+/* Spinner inside button */
 .spinner {
+  display: inline-block;
   width: 16px;
   height: 16px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-top-color: white;
+  border: 2.5px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #ffffff;
   border-radius: 50%;
-  animation: spin 0.8s linear infinite;
+  animation: spin 0.72s linear infinite;
+  flex-shrink: 0;
 }
 
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
+@keyframes spin { to { transform: rotate(360deg); } }
 
+/* ── Sign-in prompt ─────────────────────────────────────── */
 .login-prompt {
   text-align: center;
-  margin-top: 25px;
-  color: #666;
-  font-size: 15px;
+  margin-top: 22px;
+  font-size: 13.5px;
+  color: var(--text-muted);
 }
 
 .login-link {
-  color: #2e7d32;
+  color: var(--purple);
+  font-weight: 700;
   text-decoration: none;
-  font-weight: 600;
-  transition: color 0.3s;
+  transition: color 0.16s;
 }
 
 .login-link:hover {
-  color: #1b5e20;
+  color: var(--purple-hover);
   text-decoration: underline;
 }
 
-/* Responsive Design */
-@media (max-width: 968px) {
+/* ─────────────────────────────────────────────────────────────
+   SCROLLBAR
+───────────────────────────────────────────────────────────── */
+::-webkit-scrollbar       { width: 7px; }
+::-webkit-scrollbar-track { background: #f3f4f6; border-radius: 10px; }
+::-webkit-scrollbar-thumb { background: var(--purple-light); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: var(--purple); }
+
+::selection      { background: var(--purple); color: #fff; }
+::-moz-selection { background: var(--purple); color: #fff; }
+
+/* ─────────────────────────────────────────────────────────────
+   RESPONSIVE
+───────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .register-wrapper {
+    flex-direction: column;
+    max-width: 460px;
+    min-height: unset;
+  }
+
   .register-left {
+    padding: 36px 28px 32px;
+  }
+
+  .register-branding h1 {
+    font-size: 30px;
+    letter-spacing: 5px;
+  }
+
+  .register-features {
     display: none;
   }
 
   .register-right {
-    padding: 40px 30px;
+    padding: 32px 28px;
   }
 }
 
 @media (max-width: 480px) {
-  .register-container {
-    padding: 10px;
-  }
+  .register-container { padding: 14px; }
 
-  .register-right {
-    padding: 30px 20px;
-  }
+  .register-wrapper { border-radius: 16px; }
 
-  .register-form-container h2 {
-    font-size: 26px;
-  }
+  .register-left  { padding: 28px 20px; }
+  .register-right { padding: 24px 18px; }
+
+  .register-form-container h2 { font-size: 22px; }
 }

@@ -1,252 +1,718 @@
+/* ============================================
+   SIDEBAR STYLES - LIGHT BALANCED DESIGN
+   WITH SMOOTH HOVER ANIMATIONS
+   ADMIN ROLE-BASED VISIBILITY
+   ============================================ */
+
+:root {
+  --primary: #6366f1;
+  --primary-light: #818cf8;
+  --primary-dark: #4f46e5;
+  --secondary: #ec4899;
+  --accent: #f59e0b;
+  --success: #10b981;
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+  --bg-primary: #ffffff;
+  --bg-secondary: #f9fafb;
+  --border: #e5e7eb;
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Sidebar specific - LIGHT & BALANCED */
+  --sidebar-bg: #f9fafb;
+  --sidebar-text: #1f2937;
+  --sidebar-text-secondary: #6b7280;
+  --sidebar-hover-bg: rgba(99, 102, 241, 0.08);
+  --sidebar-active-bg: rgba(99, 102, 241, 0.12);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ============================================
+   SIDEBAR CONTAINER
+   ============================================ */
+
 .sidebar {
-  width: 280px;
-  height: 100vh;
-  background: linear-gradient(180deg, #1a5f3f 0%, #2ecc71 100%);
   position: fixed;
   left: 0;
   top: 0;
+  width: 260px;
+  height: 100vh;
+  background: var(--sidebar-bg);
+  padding: 20px;
+  overflow-y: auto;
+  z-index: 99;
+  box-shadow: 2px 0 12px rgba(0, 0, 0, 0.06);
   display: flex;
   flex-direction: column;
-  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
-  z-index: 1000;
+  transition: var(--transition);
+  border-right: 1px solid var(--border);
 }
 
-.sidebar-header {
-  padding: 30px 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+/* Custom scrollbar */
+.sidebar::-webkit-scrollbar {
+  width: 8px;
 }
 
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 15px;
+.sidebar::-webkit-scrollbar-track {
+  background: rgba(99, 102, 241, 0.05);
+  border-radius: 10px;
 }
 
-.logo-icon {
-  font-size: 36px;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+.sidebar::-webkit-scrollbar-thumb {
+  background: rgba(99, 102, 241, 0.2);
+  border-radius: 10px;
 }
 
-.logo h2 {
-  color: white;
-  font-size: 22px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background: rgba(99, 102, 241, 0.3);
 }
 
-.sidebar-menu {
-  flex: 1;
-  padding: 20px 0;
-  overflow-y: auto;
+/* ============================================
+   LOGO SECTION
+   ============================================ */
+
+.sidebar-logo {
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
 }
 
-.sidebar-menu::-webkit-scrollbar {
-  width: 6px;
-}
-
-.sidebar-menu::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.05);
-}
-
-.sidebar-menu::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 3px;
-}
-
-.menu-item {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  padding: 14px 25px;
-  color: rgba(255, 255, 255, 0.85);
-  text-decoration: none;
-  transition: all 0.3s ease;
-  position: relative;
-  margin: 8px 10px;
-  border-radius: 12px;
-  cursor: pointer;
-}
-
-.menu-item::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  height: 0;
-  width: 4px;
-  background: white;
-  border-radius: 0 4px 4px 0;
-  opacity: 0;
-  transition: all 0.3s ease;
-}
-
-.menu-item:hover {
-  background: rgba(255, 255, 255, 0.15);
-  color: white;
-  transform: translateX(5px);
-  padding-left: 30px;
-}
-
-.menu-item.active {
-  background: rgba(255, 255, 255, 0.25);
-  color: white;
-  font-weight: 600;
-  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-.menu-item.active::before {
-  opacity: 1;
-  height: 24px;
-}
-
-.menu-icon {
-  font-size: 22px;
-  width: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.3s ease;
-}
-
-.menu-item:hover .menu-icon {
-  transform: scale(1.1);
-}
-
-.menu-label {
-  font-size: 15px;
-  font-weight: 500;
-  letter-spacing: 0.3px;
-}
-
-.sidebar-footer {
-  padding: 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(0, 0, 0, 0.1);
-}
-
-.user-info {
+.logo-link {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 15px;
+  text-decoration: none;
+  color: var(--text-primary);
+  transition: var(--transition);
   padding: 12px;
-  background: rgba(255, 255, 255, 0.12);
-  border-radius: 12px;
-  transition: all 0.3s ease;
+  border-radius: 8px;
 }
 
-.user-info:hover {
-  background: rgba(255, 255, 255, 0.18);
+.logo-link:hover {
+  background: rgba(99, 102, 241, 0.08);
 }
 
-.user-avatar {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+.logo-icon {
+  font-size: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  border-radius: 10px;
   flex-shrink: 0;
-  font-weight: 700;
-  color: white;
+  transition: var(--transition);
 }
 
-.user-details {
+.logo-link:hover .logo-icon {
+  transform: scale(1.08);
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+}
+
+.sidebar-logo h1 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.5px;
+}
+
+/* ============================================
+   NAVIGATION MENU
+   ============================================ */
+
+.sidebar-menu {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Regular Menu Items */
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  color: var(--sidebar-text-secondary);
+  text-decoration: none;
+  border-radius: 10px;
+  transition: var(--transition);
+  cursor: pointer;
+  position: relative;
+  font-weight: 500;
+  font-size: 14px;
+  overflow: hidden;
+}
+
+/* Smooth background transition on hover */
+.menu-item::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--sidebar-hover-bg);
+  border-radius: 10px;
+  opacity: 0;
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: -1;
+}
+
+.menu-item:hover::before {
+  opacity: 1;
+}
+
+/* Icon animation on hover */
+.menu-item:hover {
+  color: var(--text-primary);
+  transform: translateX(4px);
+}
+
+/* Smooth glow effect on hover */
+.menu-item:hover::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.1), transparent);
+  border-radius: 10px;
+  animation: shimmer 0.6s ease-in-out;
+}
+
+/* Shimmer animation */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Active menu item */
+.menu-item.active {
+  background: var(--sidebar-active-bg);
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.menu-item.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(180deg, var(--primary) 0%, var(--secondary) 100%);
+  border-radius: 0 4px 4px 0;
+  z-index: 1;
+}
+
+/* Icon styling */
+.menu-item-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  color: inherit;
+  transition: var(--transition);
+}
+
+/* Icon rotation on hover */
+.menu-item:hover .menu-item-icon {
+  transform: rotate(6deg) scale(1.1);
+}
+
+.menu-item-label {
+  flex: 1;
+  font-size: 14px;
+  transition: var(--transition);
+}
+
+.menu-item-arrow {
+  color: var(--primary);
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-left: auto;
+  flex-shrink: 0;
+  transform: translateX(-8px);
+}
+
+.menu-item.active .menu-item-arrow {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Arrow bounce animation on hover for active items */
+.menu-item.active:hover .menu-item-arrow {
+  animation: arrowBounce 0.4s ease-in-out;
+}
+
+@keyframes arrowBounce {
+  0% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(6px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+/* Pulse effect for active menu item */
+.menu-item.active {
+  animation: activeMenuPulse 2s ease-in-out infinite;
+}
+
+@keyframes activeMenuPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.1);
+  }
+  50% {
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.05);
+  }
+}
+
+/* ============================================
+   ADMIN-ONLY MENU ITEMS
+   ============================================ */
+
+/* Badge for admin-only items */
+.admin-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: linear-gradient(135deg, var(--secondary) 0%, #be185d 100%);
+  color: white;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-left: auto;
+  opacity: 0;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.menu-item:hover .admin-badge,
+.menu-item.active .admin-badge {
+  opacity: 1;
+}
+
+/* Icon for admin-only indicator */
+.admin-badge .badge-icon {
+  width: 10px;
+  height: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Special styling for admin-only menu items */
+.menu-item.admin-only {
+  position: relative;
+}
+
+/* Glow effect for admin items on hover */
+.menu-item.admin-only:hover {
+  box-shadow: 0 0 15px rgba(236, 72, 153, 0.1);
+}
+
+/* Restricted indicator for non-admin users */
+.menu-item.restricted {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.menu-item.restricted:hover {
+  transform: translateX(0);
+  color: var(--sidebar-text-secondary);
+}
+
+.menu-item.restricted::before {
+  opacity: 0;
+}
+
+/* Tooltip for restricted items */
+.menu-item.restricted::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-left: 10px;
+  background: rgba(31, 41, 55, 0.95);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  z-index: 10;
+}
+
+/* ============================================
+   DIVIDER
+   ============================================ */
+
+.sidebar-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 20px 0;
+}
+
+.sidebar-section-title {
+  padding: 12px 16px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--sidebar-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 8px 0 4px 0;
+}
+
+/* ============================================
+   USER SECTION - IMPROVED TEXT VISIBILITY
+   ============================================ */
+
+.sidebar-user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: rgba(99, 102, 241, 0.08);
+  border-radius: 10px;
+  margin-bottom: 12px;
+  border: 1px solid rgba(99, 102, 241, 0.1);
+  transition: var(--transition);
   min-width: 0;
 }
 
-.user-details h4 {
+.sidebar-user:hover {
+  background: rgba(99, 102, 241, 0.12);
+  border-color: rgba(99, 102, 241, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: white;
-  font-size: 15px;
+  font-weight: 700;
+  font-size: 16px;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+  transition: var(--transition);
+}
+
+.sidebar-user:hover .user-avatar {
+  transform: scale(1.1);
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+}
+
+.user-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.user-name {
+  color: var(--text-primary);
   font-weight: 600;
-  margin: 0 0 4px 0;
+  font-size: 14px;
+  margin: 0;
+  word-break: break-word;
   line-height: 1.2;
 }
 
-.user-details p {
-  color: rgba(255, 255, 255, 0.75);
+.user-role {
+  color: var(--sidebar-text-secondary);
   font-size: 12px;
   margin: 0;
+  word-break: break-word;
   line-height: 1.2;
 }
+
+/* Admin role badge in user section */
+.user-role.admin-role {
+  color: var(--secondary);
+  font-weight: 600;
+}
+
+/* ============================================
+   LOGOUT BUTTON
+   ============================================ */
 
 .logout-btn {
   width: 100%;
-  padding: 12px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.08) 100%);
-  color: white;
-  border: 1.5px solid rgba(255, 255, 255, 0.25);
-  border-radius: 10px;
-  cursor: pointer;
-  font-size: 15px;
+  padding: 12px 16px;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  color: #dc2626;
+  border-radius: 8px;
   font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: var(--transition);
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  transition: all 0.3s ease;
-  letter-spacing: 0.3px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Smooth background animation on hover */
+.logout-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(239, 68, 68, 0.12);
+  transform: translateX(-100%);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: -1;
+}
+
+.logout-btn:hover::before {
+  transform: translateX(0);
 }
 
 .logout-btn:hover {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.14) 100%);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: #b91c1c;
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
-  border-color: rgba(255, 255, 255, 0.35);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);
 }
 
-.logout-btn:active {
-  transform: translateY(0);
+/* Icon animation */
+.logout-btn:hover {
+  animation: logoutShake 0.5s ease-in-out;
 }
 
-/* Responsive Design */
+@keyframes logoutShake {
+  0%, 100% {
+    transform: translateY(-2px) translateX(0);
+  }
+  25% {
+    transform: translateY(-2px) translateX(-2px);
+  }
+  75% {
+    transform: translateY(-2px) translateX(2px);
+  }
+}
+
+/* ============================================
+   MOBILE MENU TOGGLE
+   ============================================ */
+
+.mobile-sidebar-toggle {
+  display: none;
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  border: none;
+  border-radius: 50%;
+  color: white;
+  cursor: pointer;
+  z-index: 98;
+  box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
+  transition: var(--transition);
+  align-items: center;
+  justify-content: center;
+}
+
+.mobile-sidebar-toggle:hover {
+  transform: scale(1.1);
+  box-shadow: 0 15px 40px rgba(99, 102, 241, 0.6);
+}
+
+.mobile-sidebar-toggle:active {
+  transform: scale(0.95);
+}
+
+/* ============================================
+   OVERLAY (Mobile)
+   ============================================ */
+
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 98;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 240px;
+  }
+}
+
 @media (max-width: 768px) {
   .sidebar {
-    width: 250px;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 260px;
+    height: 100vh;
+    transform: translateX(-100%);
+    transition: var(--transition);
+    z-index: 999;
   }
 
-  .logo h2 {
-    font-size: 20px;
+  .sidebar.open {
+    transform: translateX(0);
+    animation: slideIn 0.3s ease-out;
+  }
+
+  .sidebar-overlay {
+    display: block;
+  }
+
+  .sidebar-overlay.hidden {
+    display: none;
+  }
+
+  .mobile-sidebar-toggle {
+    display: flex;
   }
 
   .menu-item {
-    padding: 12px 20px;
+    padding: 12px 14px;
     font-size: 14px;
   }
 
-  .menu-icon {
-    font-size: 20px;
+  .menu-item-label {
+    font-size: 13px;
+  }
+
+  /* Hide admin badge on mobile to save space */
+  .admin-badge {
+    display: none;
   }
 }
 
 @media (max-width: 480px) {
   .sidebar {
-    width: 230px;
+    width: 240px;
   }
 
-  .sidebar-header {
-    padding: 20px 15px;
-  }
-
-  .logo-icon {
-    font-size: 32px;
-  }
-
-  .logo h2 {
+  .sidebar-logo h1 {
     font-size: 18px;
   }
 
   .menu-item {
-    padding: 12px 18px;
-    gap: 12px;
+    padding: 12px 12px;
   }
 
-  .menu-label {
-    font-size: 14px;
+  .mobile-sidebar-toggle {
+    width: 48px;
+    height: 48px;
+    bottom: 20px;
+    right: 20px;
   }
 }
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.sidebar.open {
+  animation: slideIn 0.3s ease-out;
+}
+
+/* ============================================
+   MAIN CONTENT ADJUSTMENT
+   ============================================ */
+
+body.sidebar-open {
+  overflow: hidden;
+}
+
+.main-content {
+  margin-left: 260px;
+  transition: var(--transition);
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    margin-left: 0;
+  }
+}
+
+/* ============================================
+   FADE ANIMATION FOR ADMIN-ONLY ITEMS
+   ============================================ */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.menu-item.admin-only {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Stagger animation for multiple admin items */
+.menu-item.admin-only:nth-of-type(1) { animation-delay: 0.1s; }
+.menu-item.admin-only:nth-of-type(2) { animation-delay: 0.2s; }
+.menu-item.admin-only:nth-of-type(3) { animation-delay: 0.3s; }
