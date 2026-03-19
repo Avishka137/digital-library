@@ -1,42 +1,141 @@
+/* Header Container */
 .header {
-  background: white;
+  background: #ffffff;
   height: 70px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   position: sticky;
   top: 0;
   z-index: 100;
+  border-bottom: 1px solid #e5e7eb;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+.header:hover {
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+/* Header Content */
 .header-content {
   height: 100%;
   padding: 0 30px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
+/* Logo Styling */
 .logo {
   text-decoration: none;
-  color: #667eea;
+  color: #6366f1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 8px 16px;
+  border-radius: 8px;
+}
+
+.logo:hover {
+  background: rgba(99, 102, 241, 0.08);
+  color: #4f46e5;
+  transform: translateY(-2px);
 }
 
 .logo h1 {
   font-size: 24px;
-  font-weight: 600;
+  font-weight: 700;
+  color: #6366f1;
+  margin: 0;
+  letter-spacing: -0.5px;
 }
 
+/* Navigation Links */
 .nav-links {
   display: flex;
   gap: 30px;
+  align-items: center;
 }
 
 .nav-links a {
   text-decoration: none;
-  color: #333;
+  color: #6b7280;
   font-weight: 500;
-  transition: color 0.3s ease;
+  font-size: 15px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 8px 12px;
+  border-radius: 6px;
+  position: relative;
 }
 
 .nav-links a:hover {
-  color: #667eea;
+  color: #6366f1;
+  background: rgba(99, 102, 241, 0.08);
+}
+
+/* Underline effect on hover */
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 12px;
+  right: 12px;
+  height: 2px;
+  background: linear-gradient(90deg, #6366f1 0%, #ec4899 100%);
+  border-radius: 1px;
+  transform: scaleX(0);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-links a:hover::after {
+  transform: scaleX(1);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .header {
+    height: 60px;
+  }
+
+  .header-content {
+    padding: 0 20px;
+  }
+
+  .logo h1 {
+    font-size: 20px;
+  }
+
+  .nav-links {
+    gap: 20px;
+  }
+
+  .nav-links a {
+    font-size: 14px;
+    padding: 6px 10px;
+  }
+
+  .nav-links a::after {
+    left: 10px;
+    right: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-content {
+    padding: 0 16px;
+  }
+
+  .nav-links {
+    gap: 15px;
+  }
+
+  .nav-links a {
+    font-size: 13px;
+    padding: 6px 8px;
+  }
+
+  .logo h1 {
+    font-size: 18px;
+  }
 }
