@@ -112,7 +112,7 @@ const Dashboard = () => {
               <span>Welcome Back</span>
             </div>
             <h1 className="hero-title">
-              Your Digital <span className="gradient-text">Library</span>
+              V I K L I B <span className="gradient-text"></span>
             </h1>
             <p className="hero-subtitle">
               Discover, manage, and organize your book collection with ease

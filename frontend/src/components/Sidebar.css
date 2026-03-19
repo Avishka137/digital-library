@@ -1,5 +1,7 @@
 /* ============================================
    SIDEBAR STYLES - LIGHT BALANCED DESIGN
+   WITH SMOOTH HOVER ANIMATIONS
+   FIXED USER SECTION TEXT VISIBILITY
    ============================================ */
 
 :root {
@@ -107,6 +109,12 @@
   background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
   border-radius: 10px;
   flex-shrink: 0;
+  transition: var(--transition);
+}
+
+.logo-link:hover .logo-icon {
+  transform: scale(1.08);
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
 }
 
 .sidebar-logo h1 {
@@ -140,11 +148,49 @@
   position: relative;
   font-weight: 500;
   font-size: 14px;
+  overflow: hidden;
 }
 
-.menu-item:hover {
+/* Smooth background transition on hover */
+.menu-item::before {
+  content: '';
+  position: absolute;
+  inset: 0;
   background: var(--sidebar-hover-bg);
+  border-radius: 10px;
+  opacity: 0;
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: -1;
+}
+
+.menu-item:hover::before {
+  opacity: 1;
+}
+
+/* Icon animation on hover */
+.menu-item:hover {
   color: var(--text-primary);
+  transform: translateX(4px);
+}
+
+/* Smooth glow effect on hover */
+.menu-item:hover::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.1), transparent);
+  border-radius: 10px;
+  animation: shimmer 0.6s ease-in-out;
+}
+
+/* Shimmer animation */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
 }
 
 .menu-item.active {
@@ -162,6 +208,7 @@
   width: 4px;
   background: linear-gradient(180deg, var(--primary) 0%, var(--secondary) 100%);
   border-radius: 0 4px 4px 0;
+  z-index: 1;
 }
 
 .menu-item-icon {
@@ -172,23 +219,63 @@
   height: 24px;
   flex-shrink: 0;
   color: inherit;
+  transition: var(--transition);
+}
+
+/* Icon rotation on hover */
+.menu-item:hover .menu-item-icon {
+  transform: rotate(6deg) scale(1.1);
 }
 
 .menu-item-label {
   flex: 1;
   font-size: 14px;
+  transition: var(--transition);
 }
 
 .menu-item-arrow {
   color: var(--primary);
   opacity: 0;
-  transition: var(--transition);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   margin-left: auto;
   flex-shrink: 0;
+  transform: translateX(-8px);
 }
 
 .menu-item.active .menu-item-arrow {
   opacity: 1;
+  transform: translateX(0);
+}
+
+/* Arrow bounce animation on hover for active items */
+.menu-item.active:hover .menu-item-arrow {
+  animation: arrowBounce 0.4s ease-in-out;
+}
+
+@keyframes arrowBounce {
+  0% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(6px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+/* Pulse effect for active menu item */
+.menu-item.active {
+  animation: activeMenuPulse 2s ease-in-out infinite;
+}
+
+@keyframes activeMenuPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.1);
+  }
+  50% {
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.05);
+  }
 }
 
 /* ============================================
@@ -202,7 +289,7 @@
 }
 
 /* ============================================
-   USER SECTION
+   USER SECTION - IMPROVED TEXT VISIBILITY
    ============================================ */
 
 .sidebar-user {
@@ -214,6 +301,16 @@
   border-radius: 10px;
   margin-bottom: 12px;
   border: 1px solid rgba(99, 102, 241, 0.1);
+  transition: var(--transition);
+  /* FIX: Allow more space for text */
+  min-width: 0;
+}
+
+.sidebar-user:hover {
+  background: rgba(99, 102, 241, 0.12);
+  border-color: rgba(99, 102, 241, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
 }
 
 .user-avatar {
@@ -227,26 +324,43 @@
   color: white;
   font-weight: 700;
   font-size: 16px;
+  /* FIX: Prevent avatar from shrinking */
   flex-shrink: 0;
   box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+  transition: var(--transition);
+}
+
+.sidebar-user:hover .user-avatar {
+  transform: scale(1.1);
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
 }
 
 .user-info {
   flex: 1;
+  /* FIX: Allow text to wrap and be visible */
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .user-name {
   color: var(--text-primary);
   font-weight: 600;
   font-size: 14px;
-  margin: 0 0 4px 0;
+  margin: 0;
+  /* FIX: Allow text wrapping */
+  word-break: break-word;
+  line-height: 1.2;
 }
 
 .user-role {
   color: var(--sidebar-text-secondary);
   font-size: 12px;
   margin: 0;
+  /* FIX: Allow text wrapping */
+  word-break: break-word;
+  line-height: 1.2;
 }
 
 /* ============================================
@@ -268,12 +382,47 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Smooth background animation on hover */
+.logout-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(239, 68, 68, 0.12);
+  transform: translateX(-100%);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: -1;
+}
+
+.logout-btn:hover::before {
+  transform: translateX(0);
 }
 
 .logout-btn:hover {
-  background: rgba(239, 68, 68, 0.12);
   border-color: rgba(239, 68, 68, 0.3);
   color: #b91c1c;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);
+}
+
+/* Icon animation */
+.logout-btn:hover {
+  animation: logoutShake 0.5s ease-in-out;
+}
+
+@keyframes logoutShake {
+  0%, 100% {
+    transform: translateY(-2px) translateX(0);
+  }
+  25% {
+    transform: translateY(-2px) translateX(-2px);
+  }
+  75% {
+    transform: translateY(-2px) translateX(2px);
+  }
 }
 
 /* ============================================
@@ -304,6 +453,10 @@
   box-shadow: 0 15px 40px rgba(99, 102, 241, 0.6);
 }
 
+.mobile-sidebar-toggle:active {
+  transform: scale(0.95);
+}
+
 /* ============================================
    OVERLAY (Mobile)
    ============================================ */
@@ -317,6 +470,16 @@
   bottom: 0;
   background: rgba(0, 0, 0, 0.5);
   z-index: 98;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 /* ============================================
@@ -343,6 +506,7 @@
 
   .sidebar.open {
     transform: translateX(0);
+    animation: slideIn 0.3s ease-out;
   }
 
   .sidebar-overlay {
