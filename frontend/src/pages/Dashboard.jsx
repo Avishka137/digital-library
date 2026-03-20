@@ -28,7 +28,6 @@ const Dashboard = () => {
         'Authorization': `Bearer ${token}`
       };
 
-      // Replace with your actual API endpoints
       const [booksRes, usersRes] = await Promise.all([
         fetch('http://localhost:5000/api/books', { headers }),
         fetch('http://localhost:5000/api/users', { headers })
@@ -47,7 +46,6 @@ const Dashboard = () => {
 
         setBooks(booksData.slice(0, 6));
       } else {
-        // Use mock data if API fails
         setStats({
           totalBooks: 1,
           totalUsers: 1,
@@ -59,8 +57,6 @@ const Dashboard = () => {
       setLoading(false);
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
-      
-      // Use mock data for development
       setStats({
         totalBooks: 1,
         totalUsers: 1,
@@ -125,6 +121,22 @@ const Dashboard = () => {
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
+  };
+
+  const getCategoryStyle = (category) => {
+    const styles = {
+      'Business':    { background: '#fef3c7', color: '#d97706' },
+      'Novels':      { background: '#ede9fe', color: '#7c3aed' },
+      'Religious':   { background: '#d1fae5', color: '#059669' },
+      'Psychology':  { background: '#fee2e2', color: '#dc2626' },
+      'Science':     { background: '#dbeafe', color: '#2563eb' },
+      'History':     { background: '#fce7f3', color: '#db2777' },
+      'Technology':  { background: '#e0f2fe', color: '#0284c7' },
+      'Fiction':     { background: '#fdf4ff', color: '#a21caf' },
+      'Biography':   { background: '#fff7ed', color: '#ea580c' },
+      'Philosophy':  { background: '#f0fdf4', color: '#16a34a' },
+    };
+    return styles[category] || { background: '#f3f4f6', color: '#6b7280' };
   };
 
   return (
@@ -300,7 +312,12 @@ const Dashboard = () => {
                       <div className="book-info">
                         <h3>{book.title}</h3>
                         <p className="book-author">by {book.author}</p>
-                        <span className="book-category">{book.category}</span>
+                        <span
+                          className="book-category"
+                          style={getCategoryStyle(book.category)}
+                        >
+                          {book.category}
+                        </span>
                         <div className="book-actions">
                           <button className="btn-view" onClick={() => handleViewPDF(book)}>
                             <i className="fas fa-eye"></i> View PDF

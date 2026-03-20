@@ -1,4 +1,3 @@
-/* Header Container */
 .header {
   background: #ffffff;
   height: 70px;
@@ -8,24 +7,23 @@
   z-index: 100;
   border-bottom: 1px solid #e5e7eb;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  width: 100%;
 }
 
 .header:hover {
   box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
 }
 
-/* Header Content */
 .header-content {
   height: 100%;
   padding: 0 30px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  max-width: 1400px;
-  margin: 0 auto;
+  flex-direction: row;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-/* Logo Styling */
 .logo {
   text-decoration: none;
   color: #6366f1;
@@ -51,7 +49,6 @@
   letter-spacing: -0.5px;
 }
 
-/* Navigation Links */
 .nav-links {
   display: flex;
   gap: 30px;
@@ -75,7 +72,6 @@
   background: rgba(99, 102, 241, 0.08);
 }
 
-/* Underline effect on hover */
 .nav-links a::after {
   content: '';
   position: absolute;
@@ -93,50 +89,18 @@
   transform: scaleX(1);
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
-  .header {
-    height: 60px;
-  }
-
-  .header-content {
-    padding: 0 20px;
-  }
-
-  .logo h1 {
-    font-size: 20px;
-  }
-
-  .nav-links {
-    gap: 20px;
-  }
-
-  .nav-links a {
-    font-size: 14px;
-    padding: 6px 10px;
-  }
-
-  .nav-links a::after {
-    left: 10px;
-    right: 10px;
-  }
+  .header { height: 60px; }
+  .header-content { padding: 0 20px; }
+  .logo h1 { font-size: 20px; }
+  .nav-links { gap: 20px; }
+  .nav-links a { font-size: 14px; padding: 6px 10px; }
+  .nav-links a::after { left: 10px; right: 10px; }
 }
 
 @media (max-width: 480px) {
-  .header-content {
-    padding: 0 16px;
-  }
-
-  .nav-links {
-    gap: 15px;
-  }
-
-  .nav-links a {
-    font-size: 13px;
-    padding: 6px 8px;
-  }
-
-  .logo h1 {
-    font-size: 18px;
-  }
+  .header-content { padding: 0 16px; }
+  .nav-links { gap: 15px; }
+  .nav-links a { font-size: 13px; padding: 6px 8px; }
+  .logo h1 { font-size: 18px; }
 }
