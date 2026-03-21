@@ -1,103 +1,107 @@
-/* Categories Page Styling */
+/* =============================================================
+   Categories.css — VIKLIB
+   ============================================================= */
 
 .categories-container {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 30px;
+  padding: 32px 28px;
   min-height: 100vh;
-  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 50%, #d1fae5 100%);
+  background: #edfaf6;
 }
 
-/* Header Section */
+/* ── Header ─────────────────────────────────────────────── */
 .categories-header {
-  margin-bottom: 40px;
+  margin-bottom: 36px;
   text-align: center;
 }
 
 .categories-header h1 {
-  font-size: 42px;
+  font-size: 36px;
   font-weight: 800;
-  margin-bottom: 10px;
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  margin-bottom: 8px;
+  background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .categories-header p {
-  font-size: 18px;
-  color: #666;
+  font-size: 16px;
+  color: #9ca3af;
   margin: 0;
 }
 
-/* Search Bar */
+/* ── Search Bar ──────────────────────────────────────────── */
 .search-bar {
-  margin-bottom: 30px;
-  max-width: 600px;
+  margin-bottom: 32px;
+  max-width: 560px;
   margin-left: auto;
   margin-right: auto;
 }
 
 .category-search {
   width: 100%;
-  padding: 16px 20px;
-  border: 2px solid #e0e0e0;
-  border-radius: 15px;
-  font-size: 16px;
-  transition: all 0.3s ease;
-  background: white;
+  padding: 12px 18px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 12px;
+  font-size: 14.5px;
+  background: #ffffff;
+  color: #111827;
+  outline: none;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: border-color 0.18s, box-shadow 0.18s;
 }
 
 .category-search:focus {
-  outline: none;
-  border-color: #10b981;
-  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
+  border-color: #7c3aed;
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.10);
+  background: #ffffff;
 }
 
 .category-search::placeholder {
-  color: #999;
+  color: #9ca3af;
 }
 
-/* Categories Grid */
+/* ── Categories Grid ─────────────────────────────────────── */
 .categories-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 25px;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 22px;
   margin-bottom: 40px;
 }
 
-/* Category Card */
+/* ── Category Card ───────────────────────────────────────── */
 .category-card {
-  background: white;
-  border-radius: 20px;
-  padding: 30px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 28px 24px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
   border: 2px solid transparent;
-  animation: fadeInUp 0.5s ease-out;
+  animation: fadeInUp 0.5s ease-out both;
 }
 
 .category-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
-  border-color: #d1fae5;
+  transform: translateY(-6px);
+  box-shadow: 0 12px 28px rgba(124, 58, 237, 0.14);
+  border-color: #ede9fe;
 }
 
-/* Stagger animation for cards */
-.category-card:nth-child(1) { animation-delay: 0.1s; }
-.category-card:nth-child(2) { animation-delay: 0.2s; }
-.category-card:nth-child(3) { animation-delay: 0.3s; }
-.category-card:nth-child(4) { animation-delay: 0.4s; }
-.category-card:nth-child(5) { animation-delay: 0.5s; }
-.category-card:nth-child(6) { animation-delay: 0.6s; }
-.category-card:nth-child(7) { animation-delay: 0.7s; }
+/* Stagger animation */
+.category-card:nth-child(1) { animation-delay: 0.05s; }
+.category-card:nth-child(2) { animation-delay: 0.10s; }
+.category-card:nth-child(3) { animation-delay: 0.15s; }
+.category-card:nth-child(4) { animation-delay: 0.20s; }
+.category-card:nth-child(5) { animation-delay: 0.25s; }
+.category-card:nth-child(6) { animation-delay: 0.30s; }
+.category-card:nth-child(7) { animation-delay: 0.35s; }
 
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateY(24px);
   }
   to {
     opacity: 1;
@@ -105,241 +109,169 @@
   }
 }
 
-/* Category Icon */
+/* ── Category Icon ───────────────────────────────────────── */
 .category-icon {
-  width: 80px;
-  height: 80px;
+  width: 72px;
+  height: 72px;
   border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 40px;
-  margin-bottom: 20px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  font-size: 36px;
+  margin-bottom: 18px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
   transition: all 0.3s ease;
 }
 
 .category-card:hover .category-icon {
-  transform: rotate(10deg) scale(1.1);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+  transform: rotate(8deg) scale(1.08);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.20);
 }
 
-/* Category Title */
+/* ── Category Title ──────────────────────────────────────── */
 .category-card h3 {
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 700;
-  color: #1f2937;
-  margin: 0 0 10px 0;
-  transition: color 0.3s ease;
+  color: #111827;
+  margin: 0 0 8px;
+  transition: color 0.2s ease;
 }
 
 .category-card:hover h3 {
-  color: #059669;
+  color: #7c3aed;
 }
 
-/* Book Count */
+/* ── Book Count ──────────────────────────────────────────── */
 .book-count {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 15px;
+  gap: 6px;
+  font-size: 14px;
   color: #6b7280;
   font-weight: 600;
   margin: 0;
 }
 
 .book-count span {
-  font-size: 20px;
+  font-size: 16px;
 }
 
-/* Add Category Button */
+/* ── Add Category Button ─────────────────────────────────── */
 .add-category-btn {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
   width: 100%;
-  max-width: 300px;
-  margin: 40px auto 0;
-  padding: 18px 32px;
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  color: white;
+  max-width: 280px;
+  margin: 8px auto 0;
+  padding: 14px 28px;
+  background: linear-gradient(135deg, #7c3aed, #5b21b6);
+  color: #ffffff;
   border: none;
-  border-radius: 15px;
-  font-size: 18px;
+  border-radius: 12px;
+  font-size: 16px;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+  box-shadow: 0 4px 14px rgba(124, 58, 237, 0.30);
+  transition: all 0.2s ease;
 }
 
 .add-category-btn span {
-  font-size: 24px;
+  font-size: 22px;
+  line-height: 1;
 }
 
 .add-category-btn:hover {
+  background: linear-gradient(135deg, #5b21b6, #4c1d95);
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+  box-shadow: 0 6px 20px rgba(124, 58, 237, 0.40);
 }
 
 .add-category-btn:active {
   transform: translateY(0);
 }
 
-/* Empty State */
+/* ── Empty State ─────────────────────────────────────────── */
 .empty-state {
   text-align: center;
   padding: 80px 20px;
-  background: white;
+  background: #ffffff;
   border-radius: 20px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
-  animation: fadeInScale 0.5s ease-out;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  animation: fadeInScale 0.4s ease-out;
 }
 
 @keyframes fadeInScale {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
 }
 
 .empty-icon {
-  font-size: 80px;
-  margin-bottom: 20px;
-  opacity: 0.5;
+  font-size: 72px;
+  margin-bottom: 18px;
+  opacity: 0.45;
 }
 
 .empty-state h2 {
-  font-size: 28px;
-  color: #333;
-  margin-bottom: 10px;
+  font-size: 24px;
+  color: #111827;
   font-weight: 700;
+  margin-bottom: 8px;
 }
 
 .empty-state p {
-  font-size: 16px;
-  color: #666;
+  font-size: 15px;
+  color: #9ca3af;
   margin: 0;
 }
 
-/* Responsive Design */
+/* ── Responsive ──────────────────────────────────────────── */
 @media (max-width: 1024px) {
   .categories-grid {
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 18px;
   }
 }
 
 @media (max-width: 768px) {
-  .categories-container {
-    padding: 20px;
-  }
-
-  .categories-header h1 {
-    font-size: 36px;
-  }
-
-  .categories-header p {
-    font-size: 16px;
-  }
+  .categories-container { padding: 20px; }
+  .categories-header h1 { font-size: 28px; }
+  .categories-header p  { font-size: 15px; }
 
   .categories-grid {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 18px;
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    gap: 16px;
   }
 
-  .category-card {
-    padding: 25px;
-  }
-
-  .category-icon {
-    width: 70px;
-    height: 70px;
-    font-size: 35px;
-  }
-
-  .category-card h3 {
-    font-size: 22px;
-  }
-
-  .add-category-btn {
-    max-width: 100%;
-    padding: 16px 28px;
-    font-size: 16px;
-  }
+  .category-card  { padding: 22px 18px; }
+  .category-icon  { width: 62px; height: 62px; font-size: 30px; }
+  .category-card h3 { font-size: 18px; }
+  .add-category-btn { max-width: 100%; }
 }
 
 @media (max-width: 480px) {
-  .categories-container {
-    padding: 15px;
-  }
-
-  .categories-header h1 {
-    font-size: 30px;
-  }
-
-  .categories-header p {
-    font-size: 15px;
-  }
-
-  .search-bar {
-    margin-bottom: 25px;
-  }
-
-  .category-search {
-    padding: 14px 18px;
-    font-size: 15px;
-  }
+  .categories-container { padding: 14px; }
+  .categories-header h1 { font-size: 24px; }
 
   .categories-grid {
-    grid-template-columns: 1fr;
-    gap: 15px;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
   }
 
   .category-card {
-    padding: 20px;
+    padding: 18px 14px;
   }
 
   .category-card:nth-child(n) {
     animation-delay: 0s !important;
   }
 
-  .category-icon {
-    width: 65px;
-    height: 65px;
-    font-size: 32px;
-  }
+  .category-icon  { width: 56px; height: 56px; font-size: 26px; }
+  .category-card h3 { font-size: 16px; }
+  .book-count     { font-size: 13px; }
 
-  .category-card h3 {
-    font-size: 20px;
-  }
-
-  .book-count {
-    font-size: 14px;
-  }
-
-  .add-category-btn {
-    padding: 14px 24px;
-    font-size: 15px;
-  }
-
-  .empty-state {
-    padding: 60px 15px;
-  }
-
-  .empty-icon {
-    font-size: 60px;
-  }
-
-  .empty-state h2 {
-    font-size: 24px;
-  }
-
-  .empty-state p {
-    font-size: 15px;
-  }
+  .empty-state    { padding: 50px 14px; }
+  .empty-icon     { font-size: 56px; }
+  .empty-state h2 { font-size: 20px; }
 }

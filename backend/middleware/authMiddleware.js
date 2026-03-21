@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
-const SECRET_KEY = 'your-secret-key-change-this-in-production';
+
+const SECRET_KEY = process.env.JWT_SECRET || 'your-secret-key-change-this-in-production';
 
 // Middleware to verify JWT token
 const authenticateToken = (req, res, next) => {
@@ -50,7 +51,6 @@ const isAdmin = (req, res, next) => {
 
   next();
 };
-
 
 module.exports = { 
   authenticateToken, 
